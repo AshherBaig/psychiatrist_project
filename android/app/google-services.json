@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "930721740924",
+    "project_id": "e-psychiatrist-ab071",
+    "storage_bucket": "e-psychiatrist-ab071.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930721740924:android:e181ea8467b98040b1b1f9",
+        "android_client_info": {
+          "package_name": "com.example.psychiatrist_prje"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUx-e9OFZLGV_YGOOKy01FkjrJHbSKQ8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930721740924:android:22e1ce580a184855b1b1f9",
+        "android_client_info": {
+          "package_name": "com.example.psychiatrist_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUx-e9OFZLGV_YGOOKy01FkjrJHbSKQ8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
