@@ -1,11 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:psychiatrist_project/Patient/controllers/authController.dart';
-import 'package:psychiatrist_project/Patient/controllers/doctorListController.dart';
-import 'package:psychiatrist_project/Patient/patientScreen/screens/Home.dart';
-import 'package:psychiatrist_project/Patient/patientScreen/screens/Splash.dart';
-import 'package:psychiatrist_project/Patient/patientScreen/presentation/doctor_app.dart';
+import 'package:psychiatrist_project/features/controllers/authController.dart';
+import 'package:psychiatrist_project/features/controllers/doctorListController.dart';
+import 'package:psychiatrist_project/features/doctorScreen/screens/Splash.dart';
 import 'package:psychiatrist_project/size_confige.dart';
 
 void main() async{

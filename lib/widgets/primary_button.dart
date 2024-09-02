@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:psychiatrist_project/Patient/auth/signUpScreen.dart';
 import 'package:psychiatrist_project/widgets/app_color.dart';
 
 class PrimaryButton extends StatelessWidget {
