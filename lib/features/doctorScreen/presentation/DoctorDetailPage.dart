@@ -1,9 +1,12 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:psychiatrist_project/chat/ChatController.dart';
+import 'package:psychiatrist_project/chat/ChatRoomModel.dart';
 import 'package:psychiatrist_project/chat/ChatRoomScreen.dart';
 import 'package:psychiatrist_project/chat/ChatScreen.dart';
 import 'package:psychiatrist_project/community_chat/ComChatScreen.dart';
@@ -201,20 +204,32 @@ final AuthController authController = Get.find<AuthController>();
                 opacity: opacity,
                 child: InkWell(
                   onTap: () async {
-                    animator();
+                    // animator();
                     String currentUserId = authController.currentUserId; // Patient's ID
-                 
+                    FirebaseAuth _auth = FirebaseAuth.instance;
+                    String patientId = _auth.currentUser!.uid;
 
                   // // Fetch doctor's details using AuthController
                   // var doctorDetails = await authController.getUserById(selectedDoctorId);
                   // String recipientName = doctorDetails['fullName'];
 
                   // Create or get the chat room ID
-                  String chatId = await chatController.createChatRoom(currentUserId, "${widget.doctor.id}");
+                  String chatId = await chatController.createChatRoom(patientId, "${widget.doctor.id}");
+
+                  log(chatId);
+                  log(widget.doctor.id);
+                  log(_auth.currentUser!.uid);
 
                   // Navigate to the Chat Screen with the obtained chat ID
-                  Get.to(() => ChatRoomListScreen(userId: '${widget.doctor.id}'));
-                    animator();
+                  // Get.to(() => ChatRoomListScreen(userId: '${widget.doctor.id}'));
+
+                    DocumentSnapshot doc = await FirebaseFirestore.instance.collection("personalChats").doc(chatId).get();
+
+                    var chatRoom = ChatRoom.fromDocument(doc);
+                    log(chatRoom.participants.toString());
+                    Get.to(ChatScreen(chatRoom: chatRoom));
+
+                    // animator();
                   },
                   child: Container(
                     height: 65,

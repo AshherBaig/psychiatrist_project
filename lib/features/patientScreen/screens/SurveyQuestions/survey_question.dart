@@ -137,7 +137,7 @@ class DepressionSurveyController extends GetxController {
           actions: [
             TextButton(
               onPressed: () {
-                Get.to(DoctorScreen());
+                Get.to(PatientScreen());
                 saveToFirebase(); // Save to Firebase after showing the result
               },
               child: Text("Home"),

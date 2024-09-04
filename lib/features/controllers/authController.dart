@@ -13,10 +13,14 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  var userName = "".obs;
+  // var userName = "".obs;
+  var nameAsAPatient = "".obs;
+  var nameAsADoctor = "".obs;
   FirebaseAuth get auth => _auth;
    String currentUserId = 'patientUserId'; // Replace with actual patient user ID
   String currentUserName = 'Patient Name';
+
+
   @override
   void onInit() {
     super.onInit();
@@ -24,6 +28,7 @@ class AuthController extends GetxController {
     fetchUserName();
   }
 
+  var isDoctor = false.obs;
   var role = ''.obs;
   var fullName = ''.obs;
   var email = ''.obs;
@@ -88,7 +93,7 @@ class AuthController extends GetxController {
         email: email.value,
         password: password.value,
       );
-
+      fetchUserName(); // Code add by Ashher
       String userId = userCredential.user!.uid;
 
       DocumentSnapshot doctorDoc =
@@ -127,20 +132,29 @@ class AuthController extends GetxController {
     print("fetchUserName called");
     try {
       User? user = _auth.currentUser;
-      if (user != null) {
+      if (user != null && isDoctor.value == false) {
         print("User is logged in: ${user.uid}");
         String userId = user.uid;
-        final userDoc =
-            await _firestore.collection('patientList').doc(userId).get();
-        userName.value = userDoc['fullName'] ?? "Anonymous";
-        print("Fetched userName: ${userName.value}");
-      } else {
+        final userDoc = await _firestore.collection('patientList').doc(userId).get();
+        nameAsAPatient.value = userDoc['fullName'] ?? "Anonymous";
+        print("Fetched userName: ${nameAsAPatient.value}");
+      }
+      else if (user != null && isDoctor.value == true) {
+        print("User is logged in: ${user.uid}");
+        String userId = user.uid;
+        final userDoc = await _firestore.collection('doctorList').doc(userId).get();
+        nameAsADoctor.value = userDoc['fullName'] ?? "Anonymous";
+        print("Fetched userName: ${nameAsADoctor.value}");
+      }
+
+      else {
         print("No user logged in");
-        userName.value = "Guest";
+        nameAsAPatient.value = "Guest Patient";
+        nameAsADoctor.value = "Guest Patient";
       }
     } catch (e) {
       print("Error fetching user data: $e");
-      userName.value = "Error";
+      // nameAsAPatient.value = "Error";
     }
   }
 

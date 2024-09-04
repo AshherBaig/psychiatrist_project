@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:psychiatrist_project/constants.dart';
+import 'package:psychiatrist_project/features/doctorScreen/presentation/appbar.dart';
 import 'package:psychiatrist_project/features/doctorScreen/presentation/banner.dart';
 import 'package:psychiatrist_project/features/doctorScreen/presentation/bottom_navigation_bar.dart';
 import 'package:psychiatrist_project/features/doctorScreen/presentation/doctors_list.dart';
@@ -8,12 +9,12 @@ import 'package:psychiatrist_project/size_confige.dart';
 import 'appbar.dart';
 import 'categories_list.dart';
 
-class DoctorScreen extends StatefulWidget {
+class PatientScreen extends StatefulWidget {
   @override
-  _DoctorScreenState createState() => _DoctorScreenState();
+  _PatientScreenState createState() => _PatientScreenState();
 }
 
-class _DoctorScreenState extends State<DoctorScreen> {
+class _PatientScreenState extends State<PatientScreen> {
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {

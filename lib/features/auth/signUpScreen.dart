@@ -54,8 +54,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
               AuthField(
                   iconColor: AppColors.kLavender,
-                  onChanged: (value) =>
-                      _signUpController.fullName.value = value,
+                  onChanged: (value) => _signUpController.fullName.value = value,
                   keyboardType: TextInputType.name,
                   icon: "assets/icons/user.svg",
                   validator: (value) {

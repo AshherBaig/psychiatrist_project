@@ -92,7 +92,7 @@ class ComChatScreen extends StatelessWidget {
                   icon: Icon(Icons.send, color: Colors.blueAccent),
                   onPressed: () {
                     final message = messageController.text.trim();
-                    final senderName = authController.userName.value; // Get the user's name
+                    final senderName = authController.nameAsAPatient.value; // Get the user's name
                     final senderId = authController.auth.currentUser?.uid ?? 'Anonymous'; // Get the user ID
                     
                     if (message.isNotEmpty) {

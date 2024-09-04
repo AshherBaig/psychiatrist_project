@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:psychiatrist_project/chat/ChatMessage.dart';
 import 'package:psychiatrist_project/chat/ChatRoomModel.dart';
 import 'package:psychiatrist_project/features/controllers/authController.dart';
+import 'package:psychiatrist_project/model.dart/doctor_model.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatRoom chatRoom;
@@ -53,7 +54,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: Text("Say Hi"));
                 }
 
                 return ListView.builder(

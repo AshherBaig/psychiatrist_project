@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:psychiatrist_project/features/controllers/authController.dart';
 import 'package:psychiatrist_project/size_confige.dart';
-  
 
-class DoctorAppBar extends StatelessWidget {
-final AuthController authController = Get.find<AuthController>();
+
+class PatientAppBar extends StatelessWidget {
+  final AuthController authController = Get.find<AuthController>();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,7 +18,7 @@ final AuthController authController = Get.find<AuthController>();
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hi, ${authController.userName.value}!',
+                'Hi, ${authController.nameAsAPatient.value}!',
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w800,

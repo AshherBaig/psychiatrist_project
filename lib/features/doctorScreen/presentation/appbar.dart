@@ -18,7 +18,7 @@ final AuthController authController = Get.find<AuthController>();
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hi, ${authController.userName.value}!',
+                'Hi, ${authController.nameAsADoctor.value}!',
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w800,

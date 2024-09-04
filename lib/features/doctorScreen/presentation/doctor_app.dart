@@ -17,7 +17,6 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
-    _selectedIndex = 3;
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: SafeArea(
@@ -51,7 +50,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
           Icons.notifications,
           Icons.message,
           Icons.account_box,
-        ], 
+        ],
       ),
     );
   }

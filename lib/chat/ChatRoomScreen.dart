@@ -18,10 +18,7 @@ class ChatRoomListScreen extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('chatRooms')
-            .where('participants', arrayContainsAny: [
-              {'userId': userId}
-            ])
-            .snapshots(),
+            .where('participants', arrayContainsAny: [{'userId': userId}]).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator(color: Colors.black,));
@@ -54,7 +51,7 @@ class ChatRoomListScreen extends StatelessWidget {
                 );
               }
             else{
-              return Center(child: Text("No Chat Available"),);
+              return Center(child: Text("Not Chat Available"),);
             }
 
           }
