@@ -102,7 +102,7 @@ class _OppointmentState extends State<Oppointment> {
                                       color: Colors.black,
                                     )),
                                 TextWidget(
-                                  "Oppointment",
+                                  "Appointment",
                                   25,
                                   Colors.black,
                                   FontWeight.bold,

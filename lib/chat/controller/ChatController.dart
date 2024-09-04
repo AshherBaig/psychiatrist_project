@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:psychiatrist_project/chat/ChatMessage.dart';
+import 'package:psychiatrist_project/chat/model/ChatMessage.dart';
 
 
 class ChatController extends GetxController {
@@ -54,7 +54,9 @@ class ChatController extends GetxController {
 
 
 // Create or fetch a chat room between two users
-  Future<String> createChatRoom(String userId1, String userId2) async {
+  Future<String> createChatRoom({required String userId1,required String userId2,
+  required String doctorName, required String patientName
+  }) async {
     bool chatRoomExist = false;
     String chatRoomId = "";
     // Fetch chat rooms where the current user is a participant
@@ -82,8 +84,8 @@ class ChatController extends GetxController {
         log("Else");
         DocumentReference docRef = await _firestore.collection('personalChats').add({
           'participants': [
-            {'userId': userId1, 'role': 'patient'},
-            {'userId': userId2, 'role': 'doctor'}
+            {'userId': userId1, 'role': 'patient', 'userName': patientName},
+            {'userId': userId2, 'role': 'doctor', 'userName': doctorName}
           ],
           "participantIds": [userId1, userId2],  // This simplifies querying
           'lastMessage': '',

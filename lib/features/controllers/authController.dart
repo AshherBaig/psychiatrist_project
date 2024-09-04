@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -17,7 +18,7 @@ class AuthController extends GetxController {
   var nameAsAPatient = "".obs;
   var nameAsADoctor = "".obs;
   FirebaseAuth get auth => _auth;
-   String currentUserId = 'patientUserId'; // Replace with actual patient user ID
+   String currentUserId = '';
   String currentUserName = 'Patient Name';
 
 
@@ -129,23 +130,28 @@ class AuthController extends GetxController {
 
 
   void fetchUserName() async {
-    print("fetchUserName called");
+    if (kDebugMode) {
+      print("fetchUserName called");
+    }
     try {
       User? user = _auth.currentUser;
-      if (user != null && isDoctor.value == false) {
-        print("User is logged in: ${user.uid}");
-        String userId = user.uid;
-        final userDoc = await _firestore.collection('patientList').doc(userId).get();
-        nameAsAPatient.value = userDoc['fullName'] ?? "Anonymous";
-        print("Fetched userName: ${nameAsAPatient.value}");
-      }
-      else if (user != null && isDoctor.value == true) {
-        print("User is logged in: ${user.uid}");
-        String userId = user.uid;
-        final userDoc = await _firestore.collection('doctorList').doc(userId).get();
-        nameAsADoctor.value = userDoc['fullName'] ?? "Anonymous";
-        print("Fetched userName: ${nameAsADoctor.value}");
-      }
+      if(user != null)
+        {
+          currentUserId = user.uid;
+
+          if (isDoctor.value == false) {
+            String userId = user.uid;
+            final userDoc = await _firestore.collection('patientList').doc(userId).get();
+            nameAsAPatient.value = userDoc['fullName'] ?? "Anonymous";
+          }
+          else if (isDoctor.value == true) {
+            String userId = user.uid;
+            final userDoc = await _firestore.collection('doctorList').doc(userId).get();
+            nameAsADoctor.value = userDoc['fullName'] ?? "Anonymous";
+          }
+
+        }
+
 
       else {
         print("No user logged in");

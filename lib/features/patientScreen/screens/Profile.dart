@@ -5,12 +5,12 @@ import 'package:psychiatrist_project/res/lists.dart';
 import 'package:psychiatrist_project/widgets/text_widget.dart';
 import 'Oppointment.dart';
 
-class Profile extends StatefulWidget {
+class PatientProfile extends StatefulWidget {
   @override
-  State<Profile> createState() => _ProfileState();
+  State<PatientProfile> createState() => _PatientProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _PatientProfileState extends State<PatientProfile> {
   var animate = false;
   var opacity = 0.0;
   late Size size;
@@ -178,10 +178,10 @@ class _ProfileState extends State<Profile> {
                   onTap: () async {
                     animator();
                     await Future.delayed(const Duration(milliseconds: 400));
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Oppointment(0)),
-                    );
+                    // await Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => Oppointment(0)),
+                    // );
                     animator();
                   },
                   child: Container(

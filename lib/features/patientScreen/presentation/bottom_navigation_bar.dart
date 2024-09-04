@@ -7,12 +7,12 @@ import 'dart:math' as math;
 
 import 'package:psychiatrist_project/size_confige.dart';
 
-class BottomNavigation extends StatelessWidget {
+class PatientBottomNavigation extends StatelessWidget {
   final List<IconData> itemIcons;
   final IconData centerIcon;
   final int selectedIndex;
   final Function(int) onItemPressed;
-  const BottomNavigation({
+  const PatientBottomNavigation({
     required this.itemIcons,
     required this.centerIcon,
     required this.selectedIndex,

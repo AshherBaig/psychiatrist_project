@@ -166,62 +166,62 @@ class _ProfileState extends State<Profile> {
             ),
 
             // Make an Appointment Button
-            AnimatedPositioned(
-              bottom: animate ? 20 : -80,
-              left: 20,
-              right: 20,
-              duration: const Duration(milliseconds: 400),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 400),
-                opacity: opacity,
-                child: InkWell(
-                  onTap: () async {
-                    animator();
-                    await Future.delayed(const Duration(milliseconds: 400));
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Oppointment(0)),
-                    );
-                    animator();
-                  },
-                  child: Container(
-                    height: 65,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.blue.shade900,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextWidget(
-                          "Make an appointment",
-                          18,
-                          Colors.white,
-                          FontWeight.w500,
-                          letterSpace: 1,
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white.withOpacity(.5),
-                          size: 18,
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white.withOpacity(.2),
-                          size: 18,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // AnimatedPositioned(
+            //   bottom: animate ? 20 : -80,
+            //   left: 20,
+            //   right: 20,
+            //   duration: const Duration(milliseconds: 400),
+            //   child: AnimatedOpacity(
+            //     duration: const Duration(milliseconds: 400),
+            //     opacity: opacity,
+            //     child: InkWell(
+            //       onTap: () async {
+            //         animator();
+            //         await Future.delayed(const Duration(milliseconds: 400));
+            //         await Navigator.push(
+            //           context,
+            //           MaterialPageRoute(builder: (context) => Oppointment(0)),
+            //         );
+            //         animator();
+            //       },
+            //       child: Container(
+            //         height: 65,
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(15),
+            //           color: Colors.blue.shade900,
+            //         ),
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             TextWidget(
+            //               "Make an appointment",
+            //               18,
+            //               Colors.white,
+            //               FontWeight.w500,
+            //               letterSpace: 1,
+            //             ),
+            //             const SizedBox(width: 4),
+            //             const Icon(
+            //               Icons.arrow_forward_ios_outlined,
+            //               color: Colors.white,
+            //               size: 18,
+            //             ),
+            //             Icon(
+            //               Icons.arrow_forward_ios_outlined,
+            //               color: Colors.white.withOpacity(.5),
+            //               size: 18,
+            //             ),
+            //             Icon(
+            //               Icons.arrow_forward_ios_outlined,
+            //               color: Colors.white.withOpacity(.2),
+            //               size: 18,
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
             // Back Button
             AnimatedPositioned(

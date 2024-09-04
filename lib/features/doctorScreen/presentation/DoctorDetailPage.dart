@@ -5,16 +5,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:psychiatrist_project/chat/ChatController.dart';
-import 'package:psychiatrist_project/chat/ChatRoomModel.dart';
-import 'package:psychiatrist_project/chat/ChatRoomScreen.dart';
-import 'package:psychiatrist_project/chat/ChatScreen.dart';
+import 'package:psychiatrist_project/chat/controller/ChatController.dart';
+import 'package:psychiatrist_project/chat/model/ChatRoomModel.dart';
+import 'package:psychiatrist_project/chat/screens/ChatScreen.dart';
 import 'package:psychiatrist_project/community_chat/ComChatScreen.dart';
 import 'package:psychiatrist_project/constants.dart';
 import 'package:psychiatrist_project/features/controllers/authController.dart';
 import 'package:psychiatrist_project/model.dart/doctor_model.dart';
 import 'package:psychiatrist_project/size_confige.dart';
 import 'package:psychiatrist_project/widgets/text_widget.dart';
+
+import '../../patientScreen/screens/Oppointment.dart';
 
 class DoctorDetailPage extends StatefulWidget {
   final DoctorModel doctor;
@@ -150,7 +151,10 @@ final AuthController authController = Get.find<AuthController>();
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Schedule", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Text("Schedule", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: List.generate(4, (index) {
@@ -193,7 +197,70 @@ final AuthController authController = Get.find<AuthController>();
                   ),
                 ),
               ),
-                // Make an Appointment Button
+
+
+
+              // Make an Appointment Button
+              AnimatedPositioned(
+                bottom: animate ? 20 : -80,
+                left: 20,
+                right: 20,
+                duration: const Duration(milliseconds: 400),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 400),
+                  opacity: opacity,
+                  child: InkWell(
+                    onTap: () async {
+                      animator();
+                      await Future.delayed(const Duration(milliseconds: 400));
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Oppointment(0, widget.doctor.id, widget.doctor.fullName, widget.doctor.specialization)),
+                      );
+                      animator();
+                    },
+                    child: Container(
+                      height: 65,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.blue.shade900,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextWidget(
+                            "Make an appointment",
+                            18,
+                            Colors.white,
+                            FontWeight.w500,
+                            letterSpace: 1,
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            color: Colors.white.withOpacity(.5),
+                            size: 18,
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            color: Colors.white.withOpacity(.2),
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 10,),
+
+              // Chat with Doctor
             AnimatedPositioned(
               bottom: animate ? 20 : -80,
               left: 20,
@@ -214,11 +281,12 @@ final AuthController authController = Get.find<AuthController>();
                   // String recipientName = doctorDetails['fullName'];
 
                   // Create or get the chat room ID
-                  String chatId = await chatController.createChatRoom(patientId, "${widget.doctor.id}");
+                  String chatId = await chatController.createChatRoom(userId1: patientId, userId2: "${widget.doctor.id}",doctorName: widget.doctor.fullName,patientName: authController.nameAsAPatient.value);
 
                   log(chatId);
                   log(widget.doctor.id);
                   log(_auth.currentUser!.uid);
+                  log(widget.doctor.fullName);
 
                   // Navigate to the Chat Screen with the obtained chat ID
                   // Get.to(() => ChatRoomListScreen(userId: '${widget.doctor.id}'));
@@ -227,15 +295,16 @@ final AuthController authController = Get.find<AuthController>();
 
                     var chatRoom = ChatRoom.fromDocument(doc);
                     log(chatRoom.participants.toString());
-                    Get.to(ChatScreen(chatRoom: chatRoom));
+                    Get.to(ChatScreen(chatRoom: chatRoom, recieverName: widget.doctor.fullName,));
 
                     // animator();
                   },
                   child: Container(
                     height: 65,
                     decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue.shade900,),
                       borderRadius: BorderRadius.circular(15),
-                      color: Colors.blue.shade900,
+                      color: Colors.white,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -243,24 +312,24 @@ final AuthController authController = Get.find<AuthController>();
                         TextWidget(
                           "Chat With Doc",
                           18,
-                          Colors.white,
+                          Colors.blue.shade900,
                           FontWeight.w500,
                           letterSpace: 1,
                         ),
                         const SizedBox(width: 4),
-                        const Icon(
+                        Icon(
                           Icons.arrow_forward_ios_outlined,
-                          color: Colors.white,
+                          color: Colors.blue.shade900,
                           size: 18,
                         ),
                         Icon(
                           Icons.arrow_forward_ios_outlined,
-                          color: Colors.white.withOpacity(.5),
+                          color: Colors.blue.shade900.withOpacity(.5),
                           size: 18,
                         ),
                         Icon(
                           Icons.arrow_forward_ios_outlined,
-                          color: Colors.white.withOpacity(.2),
+                            color: Colors.blue.shade900.withOpacity(.2),
                           size: 18,
                         ),
                       ],

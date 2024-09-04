@@ -4,7 +4,7 @@ import 'package:psychiatrist_project/size_confige.dart';
 
 
 
-class DoctorBanner extends StatelessWidget {
+class PatientBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:psychiatrist_project/chat/ChatController.dart';
-import 'package:psychiatrist_project/chat/ChatRoomScreen.dart';
-import 'package:psychiatrist_project/chat/ChatScreen.dart';
+import 'package:psychiatrist_project/chat/controller/ChatController.dart';
+import 'package:psychiatrist_project/chat/screens/ChatRoomScreen.dart';
+import 'package:psychiatrist_project/chat/screens/ChatScreen.dart';
 import 'package:psychiatrist_project/community_chat/ComChatScreen.dart';
 import 'package:psychiatrist_project/constants.dart';
 import 'package:psychiatrist_project/features/controllers/authController.dart';
@@ -209,7 +209,7 @@ final AuthController authController = Get.find<AuthController>();
                   // String recipientName = doctorDetails['fullName'];
 
                   // Create or get the chat room ID
-                  String chatId = await chatController.createChatRoom(currentUserId, "${widget.doctor.id}");
+                  // String chatId = await chatController.createChatRoom(currentUserId, "${widget.doctor.id}");
 
                   // Navigate to the Chat Screen with the obtained chat ID
                   Get.to(() => ChatRoomListScreen(userId: '${widget.doctor.id}'));
