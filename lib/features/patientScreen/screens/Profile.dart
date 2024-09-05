@@ -1,9 +1,9 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:psychiatrist_project/res/lists.dart';
 import 'package:psychiatrist_project/widgets/text_widget.dart';
-import 'Oppointment.dart';
 
 class PatientProfile extends StatefulWidget {
   @override
@@ -14,13 +14,51 @@ class _PatientProfileState extends State<PatientProfile> {
   var animate = false;
   var opacity = 0.0;
   late Size size;
+  Map<String, dynamic> profileData = {};
 
   @override
   void initState() {
     super.initState();
+    fetchPatientData();
     Future.delayed(Duration.zero, () {
       animator();
     });
+  }
+
+  Future<Map<String, dynamic>?> fetchPatientData() async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection("patientList")
+          .doc(userId()) // Ensure userId() returns a valid user ID
+          .get();
+
+      if (doc.exists) {
+        // Convert the document data to a Map<String, dynamic>
+        profileData = doc.data() as Map<String, dynamic>;
+        setState(() {
+
+        });
+        return profileData;
+      } else {
+        // Document does not exist
+        print("No document found for the provided user ID.");
+        return null;
+      }
+    } catch (e) {
+      // Handle any errors that occur
+      print("Error fetching data: $e");
+      return null;
+    }
+  }
+
+  String userId(){
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    String userId = "";
+    if(_auth.currentUser != null)
+      {
+        userId = _auth.currentUser!.uid;
+      }
+    return userId;
   }
 
   void animator() {
@@ -32,217 +70,134 @@ class _PatientProfileState extends State<PatientProfile> {
 
   @override
   Widget build(BuildContext context) {
+
     size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.only(top: 20),
-        height: size.height,
-        width: size.width,
-        child: Stack(
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            // Profile Information Section
-            AnimatedPositioned(
-              left: animate ? 20 : -100,
-              duration: const Duration(milliseconds: 400),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 400),
-                opacity: opacity,
-                child: Container(
-                  padding: const EdgeInsets.only(top: 80, left: 20),
-                  height: size.height / 2.5,
-                  width: size.width,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextWidget(
-                        names[0],
-                        25,
-                        Colors.black,
-                        FontWeight.bold,
-                        letterSpace: 0,
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.only(top: 20),
+              height: size.height * 0.28,
+              width: size.width,
+              child: Stack(
+                children: [
+                  // Profile Information Section
+                  AnimatedPositioned(
+                    left: animate ? 20 : -100,
+                    duration: const Duration(milliseconds: 400),
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 400),
+                      opacity: opacity,
+                      child: Container(
+                        padding: const EdgeInsets.only(top: 80, left: 20),
+                        height: size.height / 2.5,
+                        width: size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextWidget(
+                              profileData["fullName"] ?? "",
+                              25,
+                              Colors.black,
+                              FontWeight.bold,
+                              letterSpace: 0,
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 5),
-                      TextWidget(
-                        spacilality[0],
-                        15,
-                        Colors.black.withOpacity(.6),
-                        FontWeight.bold,
-                        letterSpace: 0,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+
+                  // Biography Section
+                  AnimatedPositioned(
+                    top: animate ? 120 : 220,
+                    left: 20,
+                    right: 20,
+                    duration: const Duration(milliseconds: 400),
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 400),
+                      opacity: opacity,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: TextWidget(
+                          profileData["email"] ?? "" ,
+                          15,
+                          Colors.black.withOpacity(.5),
+                          FontWeight.normal,
+                          letterSpace: 0,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Back Button
+                  AnimatedPositioned(
+                    top: animate ? 20 : 100,
+                    left: 20,
+                    duration: const Duration(milliseconds: 400),
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 400),
+                      opacity: opacity,
+                      child: InkWell(
+                        onTap: () {
+                          animator();
+                          Navigator.pop(context);
+                        },
+                        child: const Icon(
+                          Icons.arrow_back_ios_new_sharp,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
+            FutureBuilder(
+              future: FirebaseFirestore.instance.collection("patientSurveyReport").doc(userId()).get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return Center(child: Text("No data found"));
+                } else {
+                  final data = snapshot.data!;
+                  final answers = data['answers'] as List<dynamic>;
+        
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DataTable(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey.shade300)
+                        ),
+                        columns: const [
+                          DataColumn(label: Text('Question')),
+                          DataColumn(label: Text('Selected Option')),
+                        ],
+                        rows: answers.map<DataRow>((answer) {
+                          final question = answer['question'] as String;
+                          final selectedOption = answer['selected_option'] as String;
 
-            // Biography Section
-            AnimatedPositioned(
-              top: animate ? 180 : 220,
-              left: 20,
-              right: 20,
-              duration: const Duration(milliseconds: 400),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 400),
-                opacity: opacity,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                     TextWidget("Biography", 25, Colors.black, FontWeight.bold),
-                      const SizedBox(height: 20),
-                      TextWidget(
-                        "Famous doctor, hygienist, folklore researcher and sanitary mentor, Charles Laugier, whose contribution to the development",
-                        15,
-                        Colors.black.withOpacity(.5),
-                        FontWeight.normal,
-                        letterSpace: 0,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Schedule Section
-            AnimatedPositioned(
-              left: 20,
-              right: 20,
-              bottom: animate ? 80 : -20,
-              duration: const Duration(milliseconds: 400),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 400),
-                opacity: opacity,
-                child: Container(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  height: 150,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextWidget("Schedule", 25, Colors.black, FontWeight.bold),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(4, (index) {
-                          return Card(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Container(
-                              height: 60,
-                              width: 60,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextWidget(
-                                    "${19 + index}",
-                                    15,
-                                    Colors.black,
-                                    FontWeight.bold,
-                                    letterSpace: 0,
-                                  ),
-                                  TextWidget(
-                                    "Thu",
-                                    15,
-                                    Colors.black,
-                                    FontWeight.bold,
-                                    letterSpace: 0,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(question)),
+                              DataCell(Text(selectedOption), placeholder: true),
+                            ],
                           );
-                        }),
+                        }).toList(),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Make an Appointment Button
-            AnimatedPositioned(
-              bottom: animate ? 20 : -80,
-              left: 20,
-              right: 20,
-              duration: const Duration(milliseconds: 400),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 400),
-                opacity: opacity,
-                child: InkWell(
-                  onTap: () async {
-                    animator();
-                    await Future.delayed(const Duration(milliseconds: 400));
-                    // await Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => Oppointment(0)),
-                    // );
-                    animator();
-                  },
-                  child: Container(
-                    height: 65,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.blue.shade900,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextWidget(
-                          "Make an appointment",
-                          18,
-                          Colors.white,
-                          FontWeight.w500,
-                          letterSpace: 1,
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white.withOpacity(.5),
-                          size: 18,
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.white.withOpacity(.2),
-                          size: 18,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // Back Button
-            AnimatedPositioned(
-              top: animate ? 20 : 100,
-              left: 20,
-              duration: const Duration(milliseconds: 400),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 400),
-                opacity: opacity,
-                child: InkWell(
-                  onTap: () {
-                    animator();
-                    Navigator.pop(context);
-                  },
-                  child: const Icon(
-                    Icons.arrow_back_ios_new_sharp,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
+                  );
+                }
+              },
+            )
           ],
         ),
       ),

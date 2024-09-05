@@ -96,7 +96,7 @@ class _PatientScreenState extends State<PatientScreen> {
                           child: Card(
                             elevation: 0.5,
                             child: ListTile(
-                              trailing: accept ? Text("Approved") : cancel ? Text("Cancelled") : SizedBox(),
+                              trailing: accept ? Text("Approved") : cancel ? Text("Cancelled") : Text("Pending"),
                               title: Text("${snapshot.data!.docs[index]['doctorName']} (${snapshot.data!.docs[index]['doctorSpec']})" ?? ''),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

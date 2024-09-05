@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:psychiatrist_project/community_chat/ComChatScreen.dart';
 import 'package:psychiatrist_project/constants.dart';
 import 'package:psychiatrist_project/features/doctorScreen/screens/Profile.dart';
+import 'package:psychiatrist_project/features/patientScreen/screens/Profile.dart';
 import 'dart:math' as math;
 
 import 'package:psychiatrist_project/size_confige.dart';
@@ -86,7 +87,7 @@ class PatientBottomNavigation extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Get.to(Profile());
+                              Get.to(PatientProfile());
                             },
                             child: Icon(
                               itemIcons[3],
