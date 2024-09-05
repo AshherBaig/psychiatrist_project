@@ -55,64 +55,8 @@ class _PatientScreenState extends State<PatientScreen> {
                     alignment: Alignment.centerLeft,
                     child: Text("Your Doctor Appointments", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),)),
               ),
-              Card(
-                elevation: 3,
-                child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('appointments')
-                      .where('patientId', isEqualTo: _authController.currentUserId)
-                      .snapshots(),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator()); // Show a loading spinner
-                    }
-                
-                    if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}')); // Display any error
-                    }
-                
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Column(
-                        children: [
-                          SizedBox(height: Get.height * 0.1,),
-                          Center(child: Text('No Appointments Available.')),
-                          SizedBox(height: Get.height * 0.1,),
-                        ],
-                      ); // Show message if no data
-                    }
-                
-                    // Data is available
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        var doc = snapshot.data!.docs[index];
-                        bool accept = snapshot.data!.docs[index]['accept'];
-                        bool cancel = snapshot.data!.docs[index]['cancel'];
-                        // Customize your UI for each document here
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          child: Card(
-                            elevation: 0.5,
-                            child: ListTile(
-                              trailing: accept ? Text("Approved") : cancel ? Text("Cancelled") : Text("Pending"),
-                              title: Text("${snapshot.data!.docs[index]['doctorName']} (${snapshot.data!.docs[index]['doctorSpec']})" ?? ''),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(snapshot.data!.docs[index]['date']),
-                                  Text(snapshot.data!.docs[index]['time']),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              )
+              Appointments()
+
             ],
           ),
         ),
@@ -131,6 +75,67 @@ class _PatientScreenState extends State<PatientScreen> {
           Icons.message,
           Icons.account_box,
         ],
+      ),
+    );
+  }
+
+  Widget Appointments(){
+    return Card(
+      elevation: 3,
+      child: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('appointments')
+            .where('patientId', isEqualTo: _authController.currentUserId)
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator()); // Show a loading spinner
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}')); // Display any error
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Column(
+              children: [
+                SizedBox(height: Get.height * 0.1,),
+                Center(child: Text('No Appointments Available.')),
+                SizedBox(height: Get.height * 0.1,),
+              ],
+            ); // Show message if no data
+          }
+
+          // Data is available
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: BouncingScrollPhysics(),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var doc = snapshot.data!.docs[index];
+              bool accept = snapshot.data!.docs[index]['accept'];
+              bool cancel = snapshot.data!.docs[index]['cancel'];
+              // Customize your UI for each document here
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Card(
+                  elevation: 0.5,
+                  child: ListTile(
+                    trailing: accept ? Text("Approved") : cancel ? Text("Cancelled") : Text("Pending"),
+                    title: Text("${snapshot.data!.docs[index]['doctorName']} (${snapshot.data!.docs[index]['doctorSpec']})" ?? ''),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(snapshot.data!.docs[index]['date']),
+                        Text(snapshot.data!.docs[index]['time']),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

@@ -120,7 +120,7 @@ class DoctorsList extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            height: getRelativeHeight(0.12),
+                            height: getRelativeHeight(0.15),
                             width: double.infinity,
                             decoration: BoxDecoration(
                                 color: Colors.white,
@@ -165,33 +165,9 @@ class DoctorsList extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Padding(
-                            padding: EdgeInsets.only(top: getRelativeHeight(0.04))
-                                .copyWith(left: cardWidth * 0.7),
-                            child: Container(
-                              decoration: BoxDecoration(boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 10,
-                                  offset: Offset(0, 3),
-                                  color: Colors.black26,
-                                )
-                              ], color: Colors.white, shape: BoxShape.circle),
-                              padding: EdgeInsets.all(getRelativeWidth(0.015)),
-                              child: Icon(
-                                FontAwesomeIcons.facebookMessenger,
-                                color: color,
-                                size: getRelativeWidth(0.055),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
                               padding:
-                                  EdgeInsets.only(top: getRelativeHeight(0.14))
-                                      .copyWith(left: cardWidth * 0.7),
+                              EdgeInsets.only(top: getRelativeHeight(0.14))
+                                  .copyWith(left: cardWidth * 0.7),
                               child: Text(
                                 doctor.uniName,
                                 style: TextStyle(
