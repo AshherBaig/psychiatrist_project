@@ -121,7 +121,6 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                                     textConfirm: "YES",
                                     textCancel: "NO",
                                     onConfirm: () {
-                                      Get.back();
                                       approveAppointment(snapshot.data!.docs[index].id);
                                     },
                                     onCancel: () {

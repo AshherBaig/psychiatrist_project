@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:psychiatrist_project/features/controllers/authController.dart';
 import 'package:psychiatrist_project/features/controllers/doctorListController.dart';
+import 'package:psychiatrist_project/features/controllers/doctor_profile_controller.dart';
 import 'package:psychiatrist_project/features/doctorScreen/screens/Splash.dart';
 import 'package:psychiatrist_project/size_confige.dart';
 
@@ -11,6 +12,7 @@ void main() async{
   await Firebase.initializeApp();
   Get.put(AuthController());
   Get.put(DoctorController());
+  Get.put(DocProfileController());
   runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {

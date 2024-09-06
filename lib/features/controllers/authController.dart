@@ -14,6 +14,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  RxList<DateTime> blackoutDates = <DateTime>[].obs; // Appointment Screen Variable
   // var userName = "".obs;
   var nameAsAPatient = "".obs;
   var nameAsADoctor = "".obs;
