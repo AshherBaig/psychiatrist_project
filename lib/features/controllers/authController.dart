@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:psychiatrist_project/features/controllers/doctor_profile_controller.dart';
 import 'package:psychiatrist_project/features/doctorScreen/presentation/doctor_app.dart';
 import 'package:psychiatrist_project/features/patientScreen/presentation/doctor_app.dart';
 import 'package:psychiatrist_project/features/patientScreen/screens/SurveyQuestions/survey_question.dart';
@@ -26,6 +27,7 @@ class AuthController extends GetxController {
    String currentUserId = '';
   String currentUserName = 'Patient Name';
 
+  DocProfileController _docProfileController = Get.find<DocProfileController>();
 
   @override
   void onInit() {
@@ -101,6 +103,8 @@ class AuthController extends GetxController {
       );
       fetchUserName(); // Code add by Ashher
       String userId = userCredential.user!.uid;
+      _docProfileController.getDays(userId);
+
 
       DocumentSnapshot doctorDoc =
           await _firestore.collection('doctorList').doc(userId).get();

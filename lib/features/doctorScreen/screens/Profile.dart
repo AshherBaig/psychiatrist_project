@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:psychiatrist_project/features/controllers/authController.dart';
@@ -36,6 +37,13 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    log(_docProfileController.isMon.value.toString());
+    log(_docProfileController.isTues.value.toString());
+    log(_docProfileController.isWed.value.toString());
+    log(_docProfileController.isThurs.value.toString());
+    log(_docProfileController.isFri.value.toString());
+    log(_docProfileController.isSat.value.toString());
+    log(_docProfileController.isSun.value.toString());
     size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
@@ -114,7 +122,7 @@ class _ProfileState extends State<Profile> {
               AnimatedPositioned(
                 left: 20,
                 right: 20,
-                bottom: animate ? 130 : -20,
+                bottom: animate ? -20 : -20,
                 duration: const Duration(milliseconds: 400),
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 400),
@@ -122,11 +130,15 @@ class _ProfileState extends State<Profile> {
                   child: Container(
                     padding: const EdgeInsets.only(bottom: 20),
                     height: 300,
+                    width: Get.width,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextWidget("Schedule", 25, Colors.black, FontWeight.bold),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: TextWidget("Schedule", 25, Colors.black, FontWeight.bold),
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -134,9 +146,9 @@ class _ProfileState extends State<Profile> {
                               return dayCard("Mon", () {
                                 _docProfileController.isMon.value = !_docProfileController.isMon.value;
                                 if(_docProfileController.isMon.value == false)
-                                  {
-                                    _docProfileController.mon.value = 1;
-                                  }
+                                {
+                                  _docProfileController.mon.value = 1;
+                                }
                                 else{
                                   _docProfileController.mon.value = 0;
                                 }
@@ -188,9 +200,8 @@ class _ProfileState extends State<Profile> {
 
                           ],
                         ),
-                        SizedBox(height: 10,),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 50),
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -239,6 +250,7 @@ class _ProfileState extends State<Profile> {
                             ],
                           ),
                         ),
+
                       ],
                     ),
                   ),
@@ -282,8 +294,8 @@ class _ProfileState extends State<Profile> {
           side: BorderSide(color: Colors.black54.withOpacity(0.1))
         ),
         child: Container(
-          height: 80,
-          width: 80,
+          height: 70,
+          width: 70,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
           ),

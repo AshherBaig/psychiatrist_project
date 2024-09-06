@@ -10,9 +10,9 @@ import 'package:psychiatrist_project/size_confige.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Get.put(DocProfileController());
   Get.put(AuthController());
   Get.put(DoctorController());
-  Get.put(DocProfileController());
   runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {
