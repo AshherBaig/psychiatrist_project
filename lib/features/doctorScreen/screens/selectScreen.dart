@@ -111,6 +111,7 @@ class _SelectScreenState extends State<SelectScreen>
           opacity: opacity,
           child: Column(
             children: [
+              // Select Doctor
               Container(
                 color: Colors.amber,
                 width: MediaQuery.of(context).size.width,
@@ -153,6 +154,7 @@ class _SelectScreenState extends State<SelectScreen>
                 ),
               ),
               SizedBox(height: 20),
+              // Select Patient
               Container(
                 color: const Color(0xFF00D0C3),
                 width: MediaQuery.of(context).size.width,

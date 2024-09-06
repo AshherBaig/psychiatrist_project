@@ -17,6 +17,10 @@ class AuthController extends GetxController {
   // var userName = "".obs;
   var nameAsAPatient = "".obs;
   var nameAsADoctor = "".obs;
+  RxBool isPatient = false.obs;
+  RxBool isDoctor = false.obs;
+  RxBool isLoading = false.obs;
+  RxBool isObscure = true.obs;
   FirebaseAuth get auth => _auth;
    String currentUserId = '';
   String currentUserName = 'Patient Name';
@@ -29,7 +33,6 @@ class AuthController extends GetxController {
     fetchUserName();
   }
 
-  var isDoctor = false.obs;
   var role = ''.obs;
   var fullName = ''.obs;
   var email = ''.obs;
@@ -90,6 +93,7 @@ class AuthController extends GetxController {
 
   Future<void> signIn() async {
     try {
+      isLoading.value = true;
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email.value,
         password: password.value,
@@ -119,13 +123,16 @@ class AuthController extends GetxController {
         // Get.to(DoctorDashboardScreen());
         // Get.to(DoctorScreen());
       }
+      isLoading.value = false;
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         "Message",
         "$e",
         duration: Duration(seconds: 5), // Optional: Set snackbar duration
       );
     }
+    isLoading.value = false;
   }
 
 

@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -23,9 +26,33 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   bool isRemember = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final AuthController _signInController = Get.put(AuthController());
-
+  final AuthController _signInController = Get.find<AuthController>();
   var role = Get.arguments['role'];
+
+  void checkDoctor() async {
+    var data  = await FirebaseFirestore.instance.collection("doctorList").where("email", isEqualTo: _signInController.email.value).get();
+    if(data.docs.isNotEmpty)
+      {
+        log("DOCTOR: ${data.docs.first["email"].toString()}");
+        _signInController.isDoctor.value = true;
+      }
+  }
+
+  void checkRole() async {
+    _signInController.isLoading.value = true;
+    await FirebaseFirestore.instance.collection((role == "Doctor") ? "doctorList" : "patientList")
+        .where("email", isEqualTo: _signInController.email.value)
+        .get().then((value) {
+      log("ROLE: ${value.docs.first["role"].toString()}");
+      _signInController.signIn();
+        },).onError((error, stackTrace) {
+      _signInController.isLoading.value = false;
+          log(error.toString());
+          Get.snackbar("FAILED", "Something went wrong");
+        },);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,103 +61,110 @@ class _SignInPageState extends State<SignInPage> {
         padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 66),
-              Center(
-                  child: Text('Sign In $role',
-                      style: TextStyle(
-                          fontSize: 44,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black))),
-              const SizedBox(height: 5),
-              const Text('Welcome back! Please enter your details',
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w200,
-                      color: Colors.black)),
-              const SizedBox(height: 68),
-              AuthField(
-                  iconColor: AppColors.kLavender,
-                  onChanged: (value) =>
-                      _signInController.email.value = value,
-                  keyboardType: TextInputType.emailAddress,
-                  icon: "assets/icons/user.svg",
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your email address';
-                    } else if (!value.isEmail) {
-                      return 'Please enter a valid email address';
-                    }
+          child: Obx(() {
+            return Column(
+              children: [
+                const SizedBox(height: 66),
+                Center(
+                    child: Text('Sign In $role',
+                        style: TextStyle(
+                            fontSize: 44,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black))),
+                const SizedBox(height: 5),
+                const Text('Welcome back! Please enter your details',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w200,
+                        color: Colors.black)),
+                const SizedBox(height: 68),
+                AuthField(
+                    iconColor: AppColors.kLavender,
+                    onChanged: (value) =>
+                    _signInController.email.value = value,
+                    keyboardType: TextInputType.emailAddress,
+                    icon: "assets/icons/user.svg",
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter your email address';
+                      } else if (!value.isEmail) {
+                        return 'Please enter a valid email address';
+                      }
 
-                    return null;
-                  },
-                  hintText: 'Email address'),
-              const SizedBox(height: 16),
-              AuthField(
-                  iconColor: AppColors.kPeriwinkle,
-                  onChanged: (value) =>
-                      _signInController.password.value = value,
-                  keyboardType: TextInputType.visiblePassword,
-                  icon: 'assets/icons/lock.svg',
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (!_isPasswordStrong(value)) {
-                      return 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit.';
-                    }
-                    return null;
-                  },
-                  hintText: 'Password'),
-              const SizedBox(height: 14),
-              RememberMeCheckbox(
-                onRememberChanged: (value) {
-                  setState(() {
-                    isRemember = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 15),
-              CustomTextButton(onPressed: () {}, text: 'Forgot Password'),
-              PrimaryButton(
-                  onTapBtn: () {
-                    _signInController.signIn();
-                  },
-                  text: 'Sign In'),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  const Text('Create account',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                  const Spacer(),
-                  PrimaryButton(
-                    onTapBtn: () {
-                      Get.to(SignUpPage(), arguments: {"role": "$role"});
+                      return null;
                     },
-                    text: 'Sign UP',
-                    height: 30,
-                    width: 70,
-                    fontColor: AppColors.kPrimary,
-                    btnColor: AppColors.kLightWhite2,
-                    fontSize: 12,
-                  )
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SocialButton(onTap: () {}, icon: 'assets/icons/google.svg'),
-                  const SizedBox(width: 31),
-                  SocialButton(onTap: () {}, icon: 'assets/icons/facebook.svg'),
-                  const SizedBox(width: 31),
-                  SocialButton(onTap: () {}, icon: 'assets/icons/apple.svg'),
-                ],
-              )
-            ],
-          ),
+                    hintText: 'Email address'),
+                const SizedBox(height: 16),
+                Obx(() {
+                  return AuthField(
+                      suffixIcon: _signInController.isObscure.value ? Icons.visibility_off : Icons.visibility,
+                      isObscure: _signInController.isObscure.value,
+                      isSuffixIcon: true,
+                      iconColor: AppColors.kPeriwinkle,
+                      onChanged: (value) =>
+                      _signInController.password.value = value,
+                      keyboardType: TextInputType.visiblePassword,
+                      icon: 'assets/icons/lock.svg',
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a password';
+                        }
+                        if (!_isPasswordStrong(value)) {
+                          return 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit.';
+                        }
+                        return null;
+                      },
+                      hintText: 'Password');
+                },),
+                const SizedBox(height: 14),
+                RememberMeCheckbox(
+                  onRememberChanged: (value) {
+                    setState(() {
+                      isRemember = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 15),
+                CustomTextButton(onPressed: () {}, text: 'Forgot Password'),
+                _signInController.isLoading.value ? CircularProgressIndicator(color: AppColors.kPrimary,) :  PrimaryButton(
+                    onTapBtn: () {
+                      checkRole();
+                    },
+                    text: 'Sign In'),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    const Text('Create account',
+                        style:
+                        TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                    const Spacer(),
+                    PrimaryButton(
+                      onTapBtn: () {
+                        Get.to(SignUpPage(), arguments: {"role": "$role"});
+                      },
+                      text: 'Sign UP',
+                      height: 30,
+                      width: 70,
+                      fontColor: AppColors.kPrimary,
+                      btnColor: AppColors.kLightWhite2,
+                      fontSize: 12,
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SocialButton(onTap: () {}, icon: 'assets/icons/google.svg'),
+                    const SizedBox(width: 31),
+                    SocialButton(onTap: () {}, icon: 'assets/icons/facebook.svg'),
+                    const SizedBox(width: 31),
+                    SocialButton(onTap: () {}, icon: 'assets/icons/apple.svg'),
+                  ],
+                )
+              ],
+            );
+          },),
         ),
       ),
     );

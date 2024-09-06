@@ -185,6 +185,7 @@ class _OppointmentState extends State<Oppointment> {
                               FontWeight.bold,
                               letterSpace: 0,
                             ),
+                            SizedBox(height: 10,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -220,6 +221,7 @@ class _OppointmentState extends State<Oppointment> {
                                 ),
                               ],
                             ),
+                            SizedBox(height: 20,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -264,224 +266,230 @@ class _OppointmentState extends State<Oppointment> {
                       left: 30,
                       right: 30,
                       child: InkWell(
-                        onTap: () async {
-                          if(selectedTime == "" || selectedDate == "")
-                            {
-                              Get.snackbar("Alert", "Select Date and Time");
-                            }
-                          else{
-                            try{
-                              FirebaseFirestore db = FirebaseFirestore.instance;
-                              await db.collection("appointments").add({
-                                "patientName": _authController.nameAsAPatient.value,
-                                "patientId": _authController.currentUserId,
-                                "doctorId": widget.doctorId,
-                                "doctorName": widget.doctorName,
-                                "doctorSpec": widget.doctorSpec,
-                                "date": selectedDate,
-                                "time": selectedTime,
-                                "accept": false,
-                                "cancel": false,
-                                "timeStamp": Timestamp.now()
-                              }).then((value) {
-                                isLoading = true;
-                                setState(() {
+                        onTap: () {
+                          selectedDate = "";
+                          setState(() {
 
-                                });
-
-                              },).whenComplete(() {
-                                log("Appointment Booked");
-                                isLoading = false;
-                                selectedTime = "";
-                                selectedDate = "";
-                                time = [
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                ];
-                                setState(() {
-
-                                });
-                                showModalBottomSheet(
-                                  barrierColor: Colors.black.withOpacity(.8),
-                                  backgroundColor: Colors.transparent,
-                                  isDismissible: true,
-                                  context: context,
-                                  builder: (context) {
-                                    return SizedBox(
-                                        height:
-                                        MediaQuery.of(context).size.height /
-                                            1.7,
-                                        width: double.infinity,
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Container(
-                                                height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                    1.9,
-                                                width: double.infinity,
-                                                decoration: const BoxDecoration(
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                          color: Colors.white,
-                                                          blurRadius: 40),
-                                                    ],
-                                                    gradient: LinearGradient(
-                                                        begin: Alignment.topLeft,
-                                                        end: Alignment.topRight,
-                                                        colors: [
-                                                          Colors.blue,
-                                                          Colors.green,
-                                                          Colors.red,
-                                                          Colors.white,
-                                                          Colors.yellow,
-                                                          Colors.blue,
-                                                          Colors.green,
-                                                          Colors.red,
-                                                          Colors.white,
-                                                          Colors.yellow,
-                                                          Colors.blue,
-                                                          Colors.green,
-                                                          Colors.red,
-                                                          Colors.white,
-                                                          Colors.yellow,
-                                                          Colors.blue,
-                                                          Colors.green,
-                                                          Colors.red,
-                                                          Colors.white,
-                                                          Colors.yellow,
-                                                        ]),
-                                                    borderRadius:
-                                                    BorderRadius.only(
-                                                        topLeft:
-                                                        Radius.circular(
-                                                          40,
-                                                        ),
-                                                        topRight:
-                                                        Radius.circular(
-                                                            40))),
-                                              ),
-                                            ),
-                                            Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Container(
-                                                  padding: const EdgeInsets.only(
-                                                      top: 100,
-                                                      left: 20,
-                                                      right: 20),
-                                                  height: MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                      1.93,
-                                                  width: double.infinity,
-                                                  decoration: const BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                      BorderRadius.only(
-                                                          topLeft:
-                                                          Radius.circular(
-                                                            40,
-                                                          ),
-                                                          topRight:
-                                                          Radius.circular(
-                                                              40))),
-                                                  child: Center(
-                                                    child: Column(
-                                                      children: [
-                                                        CircleAvatar(
-                                                          backgroundColor: Colors
-                                                              .black
-                                                              .withOpacity(.1),
-                                                          radius: 60,
-                                                          child: const Center(
-                                                            child: Icon(
-                                                              Icons.check,
-                                                              color:
-                                                              Colors.orange,
-                                                              size: 30,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 20,
-                                                        ),
-                                                        const Text(
-                                                          "Successed",
-                                                          style: TextStyle(
-                                                              color:
-                                                              Colors.orange,
-                                                              fontWeight:
-                                                              FontWeight.bold,
-                                                              fontSize: 20),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )),
-                                            ),
-                                            Align(
-                                                alignment: Alignment.topCenter,
-                                                child: Container(
-                                                  height: 90,
-                                                  width: 90,
-                                                  decoration: BoxDecoration(
-                                                      boxShadow: const [
-                                                        BoxShadow(
-                                                            color: Colors.white,
-                                                            blurRadius: 10,
-                                                            offset:
-                                                            Offset(0, 10)),
-                                                        BoxShadow(
-                                                            color: Colors
-                                                                .transparent,
-                                                            offset:
-                                                            Offset(10, 0)),
-                                                        BoxShadow(
-                                                            color: Colors
-                                                                .transparent,
-                                                            offset:
-                                                            Offset(-10, 0))
-                                                      ],
-                                                      shape: BoxShape.circle,
-                                                      image: DecorationImage(
-                                                          image: images[widget.index])),
-                                                )),
-                                          ],
-                                        ));
-                                  },
-                                );
-                              },).onError((error, stackTrace) {
-                                isLoading = false;
-                                selectedTime = "";
-                                selectedDate = "";
-                                time = [
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                ];
-                                setState(() {
-
-                                });
-                              },);
-                            }
-                            catch(e){
-                              log(e.toString());
-                            }
-
-                          }
-
-
-
-
+                          });
                         },
+                        // onTap: () async {
+                        //   if(selectedTime == "" || selectedDate == "")
+                        //     {
+                        //       Get.snackbar("Alert", "Select Date and Time");
+                        //     }
+                        //   else{
+                        //     try{
+                        //       FirebaseFirestore db = FirebaseFirestore.instance;
+                        //       await db.collection("appointments").add({
+                        //         "patientName": _authController.nameAsAPatient.value,
+                        //         "patientId": _authController.currentUserId,
+                        //         "doctorId": widget.doctorId,
+                        //         "doctorName": widget.doctorName,
+                        //         "doctorSpec": widget.doctorSpec,
+                        //         "date": selectedDate,
+                        //         "time": selectedTime,
+                        //         "accept": false,
+                        //         "cancel": false,
+                        //         "timeStamp": Timestamp.now()
+                        //       }).then((value) {
+                        //         isLoading = true;
+                        //         setState(() {
+                        //
+                        //         });
+                        //
+                        //       },).whenComplete(() {
+                        //         log("Appointment Booked");
+                        //         isLoading = false;
+                        //         selectedTime = "";
+                        //         selectedDate = "";
+                        //         time = [
+                        //           false,
+                        //           false,
+                        //           false,
+                        //           false,
+                        //           false,
+                        //           false,
+                        //         ];
+                        //         setState(() {
+                        //
+                        //         });
+                        //         showModalBottomSheet(
+                        //           barrierColor: Colors.black.withOpacity(.8),
+                        //           backgroundColor: Colors.transparent,
+                        //           isDismissible: true,
+                        //           context: context,
+                        //           builder: (context) {
+                        //             return SizedBox(
+                        //                 height:
+                        //                 MediaQuery.of(context).size.height /
+                        //                     1.7,
+                        //                 width: double.infinity,
+                        //                 child: Stack(
+                        //                   children: [
+                        //                     Align(
+                        //                       alignment: Alignment.bottomCenter,
+                        //                       child: Container(
+                        //                         height: MediaQuery.of(context)
+                        //                             .size
+                        //                             .height /
+                        //                             1.9,
+                        //                         width: double.infinity,
+                        //                         decoration: const BoxDecoration(
+                        //                             boxShadow: [
+                        //                               BoxShadow(
+                        //                                   color: Colors.white,
+                        //                                   blurRadius: 40),
+                        //                             ],
+                        //                             gradient: LinearGradient(
+                        //                                 begin: Alignment.topLeft,
+                        //                                 end: Alignment.topRight,
+                        //                                 colors: [
+                        //                                   Colors.blue,
+                        //                                   Colors.green,
+                        //                                   Colors.red,
+                        //                                   Colors.white,
+                        //                                   Colors.yellow,
+                        //                                   Colors.blue,
+                        //                                   Colors.green,
+                        //                                   Colors.red,
+                        //                                   Colors.white,
+                        //                                   Colors.yellow,
+                        //                                   Colors.blue,
+                        //                                   Colors.green,
+                        //                                   Colors.red,
+                        //                                   Colors.white,
+                        //                                   Colors.yellow,
+                        //                                   Colors.blue,
+                        //                                   Colors.green,
+                        //                                   Colors.red,
+                        //                                   Colors.white,
+                        //                                   Colors.yellow,
+                        //                                 ]),
+                        //                             borderRadius:
+                        //                             BorderRadius.only(
+                        //                                 topLeft:
+                        //                                 Radius.circular(
+                        //                                   40,
+                        //                                 ),
+                        //                                 topRight:
+                        //                                 Radius.circular(
+                        //                                     40))),
+                        //                       ),
+                        //                     ),
+                        //                     Align(
+                        //                       alignment: Alignment.bottomCenter,
+                        //                       child: Container(
+                        //                           padding: const EdgeInsets.only(
+                        //                               top: 100,
+                        //                               left: 20,
+                        //                               right: 20),
+                        //                           height: MediaQuery.of(context)
+                        //                               .size
+                        //                               .height /
+                        //                               1.93,
+                        //                           width: double.infinity,
+                        //                           decoration: const BoxDecoration(
+                        //                               color: Colors.white,
+                        //                               borderRadius:
+                        //                               BorderRadius.only(
+                        //                                   topLeft:
+                        //                                   Radius.circular(
+                        //                                     40,
+                        //                                   ),
+                        //                                   topRight:
+                        //                                   Radius.circular(
+                        //                                       40))),
+                        //                           child: Center(
+                        //                             child: Column(
+                        //                               children: [
+                        //                                 CircleAvatar(
+                        //                                   backgroundColor: Colors
+                        //                                       .black
+                        //                                       .withOpacity(.1),
+                        //                                   radius: 60,
+                        //                                   child: const Center(
+                        //                                     child: Icon(
+                        //                                       Icons.check,
+                        //                                       color:
+                        //                                       Colors.orange,
+                        //                                       size: 30,
+                        //                                     ),
+                        //                                   ),
+                        //                                 ),
+                        //                                 const SizedBox(
+                        //                                   height: 20,
+                        //                                 ),
+                        //                                 const Text(
+                        //                                   "Successed",
+                        //                                   style: TextStyle(
+                        //                                       color:
+                        //                                       Colors.orange,
+                        //                                       fontWeight:
+                        //                                       FontWeight.bold,
+                        //                                       fontSize: 20),
+                        //                                 ),
+                        //                               ],
+                        //                             ),
+                        //                           )),
+                        //                     ),
+                        //                     Align(
+                        //                         alignment: Alignment.topCenter,
+                        //                         child: Container(
+                        //                           height: 90,
+                        //                           width: 90,
+                        //                           decoration: BoxDecoration(
+                        //                               boxShadow: const [
+                        //                                 BoxShadow(
+                        //                                     color: Colors.white,
+                        //                                     blurRadius: 10,
+                        //                                     offset:
+                        //                                     Offset(0, 10)),
+                        //                                 BoxShadow(
+                        //                                     color: Colors
+                        //                                         .transparent,
+                        //                                     offset:
+                        //                                     Offset(10, 0)),
+                        //                                 BoxShadow(
+                        //                                     color: Colors
+                        //                                         .transparent,
+                        //                                     offset:
+                        //                                     Offset(-10, 0))
+                        //                               ],
+                        //                               shape: BoxShape.circle,
+                        //                               image: DecorationImage(
+                        //                                   image: images[widget.index])),
+                        //                         )),
+                        //                   ],
+                        //                 ));
+                        //           },
+                        //         );
+                        //       },).onError((error, stackTrace) {
+                        //         isLoading = false;
+                        //         selectedTime = "";
+                        //         selectedDate = "";
+                        //         time = [
+                        //           false,
+                        //           false,
+                        //           false,
+                        //           false,
+                        //           false,
+                        //           false,
+                        //         ];
+                        //         setState(() {
+                        //
+                        //         });
+                        //       },);
+                        //     }
+                        //     catch(e){
+                        //       log(e.toString());
+                        //     }
+                        //
+                        //   }
+                        //
+                        //
+                        //
+                        //
+                        // },
                         child: Container(
                           height: 65,
                           width: size.width,

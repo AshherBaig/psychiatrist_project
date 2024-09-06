@@ -58,7 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat with ${widget.recieverName}'),  // Replace with the name of the other participant
+        title: Text('${widget.recieverName}'),  // Replace with the name of the other participant
       ),
       body: Column(
         children: [
