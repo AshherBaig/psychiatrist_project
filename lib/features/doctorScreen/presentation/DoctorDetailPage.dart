@@ -114,7 +114,7 @@ final AuthController authController = Get.find<AuthController>();
                     ),
 
                     AnimatedPositioned(
-                      top: animate ? 210 : 220,
+                      top: animate ? 220 : 220,
                       left: 20,
                       right: 20,
                       duration: const Duration(milliseconds: 400),

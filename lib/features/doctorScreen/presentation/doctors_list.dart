@@ -32,10 +32,10 @@ class DoctorsList extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: getRelativeWidth(0.035)),
           itemBuilder: (context, index) {
             final doctor = doctorController.doctorList[index];
-            final color = kCategoriesSecondryColor[
-                (kCategoriesSecondryColor.length - index - 1)];
-            final circleColor = kCategoriesPrimaryColor[
-                (kCategoriesPrimaryColor.length - index - 1)];
+            // final color = kCategoriesSecondryColor[(kCategoriesSecondryColor.length - index - 1)];
+            final color = Color(0xff31DFB5);
+            // final circleColor = kCategoriesPrimaryColor[(kCategoriesPrimaryColor.length - index - 1)];
+            final circleColor = Color(0xff85E4FD);
             final cardWidth = getRelativeWidth(0.48);
 
             return GestureDetector(

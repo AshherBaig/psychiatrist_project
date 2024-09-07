@@ -4,13 +4,11 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:psychiatrist_project/features/auth/signInScreen.dart';
 import 'package:psychiatrist_project/features/controllers/doctor_profile_controller.dart';
 import 'package:psychiatrist_project/features/doctorScreen/presentation/doctor_app.dart';
 import 'package:psychiatrist_project/features/patientScreen/presentation/doctor_app.dart';
 import 'package:psychiatrist_project/features/patientScreen/screens/SurveyQuestions/survey_question.dart';
-
-import 'package:psychiatrist_project/widgets/custom_snack_bar.dart';
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -49,6 +47,7 @@ class AuthController extends GetxController {
 
   Future<void> SignUp() async {
     try {
+      isLoading.value = true;
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: email.value,
@@ -66,10 +65,19 @@ class AuthController extends GetxController {
           'address': address.value,
           'yearsOfExperience': yearsOfExperience.value,
           'role': role.value,
+          'mon': 0,
+          'tue': 0,
+          'wed': 0,
+          'thurs': 0,
+          'fri': 0,
+          'sat': 0,
+          'sun': 0
         });
+        isDoctor.value = true;
+        Get.to(SignInPage(), arguments: {'role': role.value});
         Get.snackbar(
           "Message",
-          "SinUp Successfully $fullName",
+          "Sin Up Successfully $fullName",
           duration: Duration(seconds: 5), // Optional: Set snackbar duration
         );
       } else {
@@ -79,9 +87,11 @@ class AuthController extends GetxController {
           'email': email.value,
           'role': role.value,
         });
+        isDoctor.value = false;
+        Get.to(SignInPage(), arguments: {'role': role.value});
         Get.snackbar(
           "Message",
-          "SinUp Successfully $fullName",
+          "Sin Up Successfully $fullName",
           duration: Duration(seconds: 5), // Optional: Set snackbar duration
         );
       }
@@ -94,13 +104,16 @@ class AuthController extends GetxController {
       uniName.value = "";
       yearsOfExperience.value = "";
       role.value = "";
+      isLoading.value = false;
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         "Message",
         "$e",
         duration: Duration(seconds: 5), // Optional: Set snackbar duration
       );
     }
+    isLoading.value = false;
   }
 
   Future<void> signIn() async {
