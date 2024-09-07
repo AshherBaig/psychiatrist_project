@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:psychiatrist_project/constants.dart';
@@ -34,47 +35,54 @@ class _PatientScreenState extends State<PatientScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: getRelativeHeight(0.025)),
-              PatientAppBar(),
-              SizedBox(height: getRelativeHeight(0.015)),
-              PatientBanner(),
-              SizedBox(height: getRelativeHeight(0.035)),
-              CategoriesList(),
-              SizedBox(height: getRelativeHeight(0.01)),
-              DoctorsList(),
-              SizedBox(height: getRelativeHeight(0.01)),
-              Padding(
-                padding: const EdgeInsets.only(left: 30),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("Your Doctor Appointments", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),)),
-              ),
-              Appointments()
+    return WillPopScope(
+      onWillPop: () async {
+        // Close the application
+        SystemNavigator.pop();
+        return false; // Prevent default back button behavior (do not navigate back)
+      },
+      child: Scaffold(
+        backgroundColor: kBackgroundColor,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: getRelativeHeight(0.025)),
+                PatientAppBar(),
+                SizedBox(height: getRelativeHeight(0.015)),
+                PatientBanner(),
+                SizedBox(height: getRelativeHeight(0.035)),
+                CategoriesList(),
+                SizedBox(height: getRelativeHeight(0.01)),
+                DoctorsList(),
+                SizedBox(height: getRelativeHeight(0.01)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("Your Doctor Appointments", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),)),
+                ),
+                Appointments()
 
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-      bottomNavigationBar: PatientBottomNavigation(
-        selectedIndex: _selectedIndex,
-        onItemPressed: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        centerIcon: Icons.place,
-        itemIcons: [
-          Icons.home,
-          Icons.notifications,
-          Icons.message,
-          Icons.account_box,
-        ],
+        bottomNavigationBar: PatientBottomNavigation(
+          selectedIndex: _selectedIndex,
+          onItemPressed: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          centerIcon: Icons.place,
+          itemIcons: [
+            Icons.home,
+            Icons.notifications,
+            Icons.message,
+            Icons.account_box,
+          ],
+        ),
       ),
     );
   }

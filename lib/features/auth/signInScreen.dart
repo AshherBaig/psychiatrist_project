@@ -29,6 +29,15 @@ class _SignInPageState extends State<SignInPage> {
   final AuthController _signInController = Get.find<AuthController>();
   var role = Get.arguments['role'];
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _signInController.email.value = '';
+    _signInController.password.value = '';
+    _signInController.isLoading.value = false;
+  }
+
   void checkDoctor() async {
     var data  = await FirebaseFirestore.instance.collection("doctorList").where("email", isEqualTo: _signInController.email.value).get();
     if(data.docs.isNotEmpty)

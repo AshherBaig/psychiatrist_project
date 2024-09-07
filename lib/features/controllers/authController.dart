@@ -85,6 +85,15 @@ class AuthController extends GetxController {
           duration: Duration(seconds: 5), // Optional: Set snackbar duration
         );
       }
+      fullName.value = "";
+      email.value = "";
+      password.value = "";
+      specialization.value = "";
+      licenseNumber.value = "";
+      address.value = "";
+      uniName.value = "";
+      yearsOfExperience.value = "";
+      role.value = "";
     } catch (e) {
       Get.snackbar(
         "Message",
@@ -128,6 +137,8 @@ class AuthController extends GetxController {
         // Get.to(DoctorDashboardScreen());
         // Get.to(DoctorScreen());
       }
+      email.value = '';
+      password.value = '';
       isLoading.value = false;
     } catch (e) {
       isLoading.value = false;

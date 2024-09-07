@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:psychiatrist_project/features/patientScreen/presentation/doctor_app.dart';
 import 'package:psychiatrist_project/features/patientScreen/screens/SurveyQuestions/model/question_mode.dart';
@@ -155,52 +156,56 @@ class DepressionSurvey extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Depression Survey")),
-      body: ListView.builder(
-        itemCount: controller.surveyQuestions.length,
-        itemBuilder: (context, index) {
-          final question = controller.surveyQuestions[index];
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  question.question,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                DropdownButtonFormField<String>(
-                  value: question.selectedOption.isEmpty
-                      ? null
-                      : question.selectedOption,
-                  items: question.options
-                      .map((option) => DropdownMenuItem(
-                            value: option,
-                            child: Text(option),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    question.selectedOption = value!;
-                    log(question.selectedOption);
-                    controller.update();
-                  },
-                  hint: Text("Select an option"),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: controller.showResult,
-        child: Icon(Icons.check),
-        tooltip: "Calculate Depression Level",
+    return WillPopScope(
+      onWillPop: () async {
+        // Close the application
+        SystemNavigator.pop();
+        return false; // Prevent default back button behavior (do not navigate back)
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text("Depression Survey")),
+        body: ListView.builder(
+          itemCount: controller.surveyQuestions.length,
+          itemBuilder: (context, index) {
+            final question = controller.surveyQuestions[index];
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    question.question,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: question.selectedOption.isEmpty
+                        ? null
+                        : question.selectedOption,
+                    items: question.options
+                        .map((option) => DropdownMenuItem(
+                              value: option,
+                              child: Text(option),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      question.selectedOption = value!;
+                      log(question.selectedOption);
+                      controller.update();
+                    },
+                    hint: Text("Select an option"),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: controller.showResult,
+          child: Icon(Icons.check),
+          tooltip: "Calculate Depression Level",
+        ),
       ),
     );
   }
 }
 
-void main() {
-  runApp(GetMaterialApp(home: DepressionSurvey()));
-}

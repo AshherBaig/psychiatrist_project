@@ -23,6 +23,21 @@ class _SignUpPageState extends State<SignUpPage> {
   final AuthController _signUpController = Get.put(AuthController());
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _signUpController.fullName.value = "";
+    _signUpController.email.value = "";
+    _signUpController.password.value = "";
+    _signUpController.specialization.value = "";
+    _signUpController.licenseNumber.value = "";
+    _signUpController.address.value = "";
+    _signUpController.uniName.value = "";
+    _signUpController.yearsOfExperience.value = "";
+    _signUpController.role.value = "";
+  }
+
+  @override
   Widget build(BuildContext context) {
     var role = Get.arguments['role'];
     _signUpController.role.value = role;

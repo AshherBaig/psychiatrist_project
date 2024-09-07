@@ -2,7 +2,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:psychiatrist_project/features/doctorScreen/screens/selectScreen.dart';
 import 'package:psychiatrist_project/res/lists.dart';
+import 'package:psychiatrist_project/widgets/custom_widgets.dart';
 import 'package:psychiatrist_project/widgets/text_widget.dart';
 
 class PatientProfile extends StatefulWidget {
@@ -140,15 +143,41 @@ class _PatientProfileState extends State<PatientProfile> {
                     child: AnimatedOpacity(
                       duration: const Duration(milliseconds: 400),
                       opacity: opacity,
-                      child: InkWell(
-                        onTap: () {
-                          animator();
-                          Navigator.pop(context);
-                        },
-                        child: const Icon(
-                          Icons.arrow_back_ios_new_sharp,
-                          color: Colors.black,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              animator();
+                              Navigator.pop(context);
+                            },
+                            child: const Icon(
+                              Icons.arrow_back_ios_new_sharp,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(width: Get.width * 0.75,),
+                          InkWell(
+                            onTap: () {
+                              CustomWidgets.showConfirmDialogWithActions(
+                                  context,
+                                  "Are you sure",
+                                  "Yes", "No", () {
+                                    FirebaseAuth.instance.signOut().whenComplete(() {
+                                      Get.to(SelectScreen());
+                                    },);
+
+                                  }, () {
+
+                                  },);
+
+                            },
+                            child: const Icon(
+                              Icons.logout,
+                              color: Colors.redAccent,
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
