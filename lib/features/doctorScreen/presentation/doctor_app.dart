@@ -116,9 +116,10 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           child: Card(
-                            elevation: 0.5,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                            elevation: 4,
                             child: ListTile(
-                              trailing: accept ? Text("Approved") : cancel ? Text("Cancelled") : Row(
+                              trailing: accept ? Text("Approved",style: TextStyle(color: Colors.green)) : cancel ? Text("Cancelled",style: TextStyle(color: Colors.red),) : Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(onPressed: () {
@@ -152,7 +153,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                                   }, icon: Icon(Icons.cancel, color: Colors.red,)),
                                 ],
                               ),
-                              title: Text(snapshot.data!.docs[index]['patientName'] ?? ''),
+                              title: Text(snapshot.data!.docs[index]['patientName'] ?? '', style: TextStyle(fontWeight: FontWeight.w500),),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
