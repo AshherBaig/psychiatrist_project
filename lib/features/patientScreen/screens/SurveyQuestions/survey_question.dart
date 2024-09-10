@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -60,17 +59,18 @@ class DepressionSurveyController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  int calculateDepressionLevel() {
-    int totalScore = 0;
+  double calculateDepressionPercentage() {
+    int totalWeight = surveyQuestions.fold(0, (sum, question) => sum + question.weight);
+    int userScore = 0;
 
     for (var question in surveyQuestions) {
       if (question.selectedOption.isNotEmpty) {
-        // Add the weight to the total score
-        totalScore += question.weight;
+        userScore += question.weight;
       }
     }
 
-    return totalScore;
+    double percentage = (userScore / totalWeight) * 100;
+    return percentage;
   }
 
   Future<void> saveToFirebase() async {
@@ -80,16 +80,15 @@ class DepressionSurveyController extends GetxController {
       if (user != null) {
         String userId = user.uid;
         final firestore = FirebaseFirestore.instance;
-        final userDoc =
-            await firestore.collection('patientList').doc(userId).get();
+        final userDoc = await firestore.collection('patientList').doc(userId).get();
         String userName = userDoc['fullName'] ?? "Anonymous";
 
-        int score = calculateDepressionLevel();
+        double depressionPercentage = calculateDepressionPercentage();
 
         await _firestore.collection('patientSurveyReport').doc(userId).set({
           'user_id': userId,
           'user_name': userName,
-          'score': score,
+          'depression_percentage': depressionPercentage,
           'survey_date': DateTime.now(),
           'answers': surveyQuestions
               .map((q) => {
@@ -103,12 +102,16 @@ class DepressionSurveyController extends GetxController {
           'Success',
           'Your report has been saved successfully!',
           snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.greenAccent,
+          colorText: Colors.white,
         );
       } else {
         Get.snackbar(
           'Error',
           'User not logged in!',
           snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
         );
       }
     } catch (e) {
@@ -116,37 +119,69 @@ class DepressionSurveyController extends GetxController {
         'Error',
         'Failed to save report: $e',
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
       );
     }
   }
 
   void showResult() {
-    int score = calculateDepressionLevel();
-    String result;
+    double percentage = calculateDepressionPercentage();
+    String resultMessage;
 
-    if (score < 20) {
-      result = "Low Depression";
-    } else if (score < 50) {
-      result = "Moderate Depression";
+    if (percentage < 20) {
+      resultMessage = "You have a low chance of depression symptoms (${percentage.toStringAsFixed(1)}%).";
+    } else if (percentage < 50) {
+      resultMessage = "You may have moderate chances of depression symptoms (${percentage.toStringAsFixed(1)}%).";
     } else {
-      result = "High Depression";
+      resultMessage = "You have a high chance of depression symptoms (${percentage.toStringAsFixed(1)}%).";
     }
 
     Get.dialog(
-        barrierDismissible: false,
-        AlertDialog(
-          title: Text("Depression Level"),
-          content: Text(result),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.to(PatientScreen());
-                saveToFirebase(); // Save to Firebase after showing the result
-              },
-              child: Text("Home"),
+      barrierDismissible: false,
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          "Depression Level",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              resultMessage,
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 20),
+            CircularProgressIndicator(
+              value: percentage / 100,
+              backgroundColor: Colors.grey.shade300,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                  percentage > 50 ? Colors.red : Colors.green),
             ),
           ],
-        ));
+        ),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              backgroundColor: Colors.blueAccent,
+            ),
+            onPressed: () {
+              Get.to(PatientScreen());
+              saveToFirebase();
+            },
+            child: Text(
+              "Go to Home",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -158,49 +193,75 @@ class DepressionSurvey extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Close the application
         SystemNavigator.pop();
-        return false; // Prevent default back button behavior (do not navigate back)
+        return false;
       },
       child: Scaffold(
-        appBar: AppBar(title: Text("Depression Survey")),
-        body: ListView.builder(
-          itemCount: controller.surveyQuestions.length,
-          itemBuilder: (context, index) {
-            final question = controller.surveyQuestions[index];
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    question.question,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          title: Text("Depression Survey"),
+          backgroundColor: Colors.blueAccent,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: ListView.builder(
+            itemCount: controller.surveyQuestions.length,
+            itemBuilder: (context, index) {
+              final question = controller.surveyQuestions[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          question.question,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 10),
+                        DropdownButtonFormField<String>(
+                          value: question.selectedOption.isEmpty
+                              ? null
+                              : question.selectedOption,
+                          items: question.options
+                              .map((option) => DropdownMenuItem(
+                                    value: option,
+                                    child: Text(option),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            question.selectedOption = value!;
+                            log(question.selectedOption);
+                            controller.update();
+                          },
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          hint: Text("Select an option"),
+                        ),
+                      ],
+                    ),
                   ),
-                  DropdownButtonFormField<String>(
-                    value: question.selectedOption.isEmpty
-                        ? null
-                        : question.selectedOption,
-                    items: question.options
-                        .map((option) => DropdownMenuItem(
-                              value: option,
-                              child: Text(option),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      question.selectedOption = value!;
-                      log(question.selectedOption);
-                      controller.update();
-                    },
-                    hint: Text("Select an option"),
-                  ),
-                ],
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: controller.showResult,
+          backgroundColor: Colors.blueAccent,
           child: Icon(Icons.check),
           tooltip: "Calculate Depression Level",
         ),
@@ -208,4 +269,3 @@ class DepressionSurvey extends StatelessWidget {
     );
   }
 }
-

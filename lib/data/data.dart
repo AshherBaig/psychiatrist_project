@@ -6,18 +6,18 @@ import 'package:psychiatrist_project/model.dart/doctor.dart';
 class Data {
   static final categoriesList = [
     Category(
-      title: "Cardiology",
-      doctorsNumber: 15,
+      title: "VR Therapy",
+      doctorsNumber: 3,
       icon: Icons.favorite,
     ),
     Category(
-      title: "Pediateric",
-      doctorsNumber: 8,
-      icon: LineIcons.child,
+      title: "Quran Therapy",
+      doctorsNumber: 2,
+      icon: LineIcons.bookReader,
     ),
     Category(
-      title: "Dermatology",
-      doctorsNumber: 7,
+      title: "Physical Exercise Video",
+      doctorsNumber: 1,
       icon: Icons.line_style,
     ),
     Category(
