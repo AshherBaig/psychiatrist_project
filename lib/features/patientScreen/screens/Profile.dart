@@ -184,6 +184,7 @@ class _PatientProfileState extends State<PatientProfile> {
                 ],
               ),
             ),
+
             FutureBuilder(
               future: FirebaseFirestore.instance.collection("patientSurveyReport").doc(userId()).get(),
               builder: (context, snapshot) {

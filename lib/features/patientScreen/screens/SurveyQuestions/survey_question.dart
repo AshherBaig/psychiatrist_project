@@ -171,8 +171,14 @@ class DepressionSurveyController extends GetxController {
               backgroundColor: Colors.blueAccent,
             ),
             onPressed: () {
-              Get.to(PatientScreen());
-              saveToFirebase();
+              String userId = FirebaseAuth.instance.currentUser!.uid;
+              saveToFirebase().whenComplete(() {
+                FirebaseFirestore.instance.collection('patientList').doc(userId).update(
+                    {
+                      "firstLogin": true
+                    });
+                Get.to(PatientScreen());
+              },);
             },
             child: Text(
               "Go to Home",
@@ -260,7 +266,19 @@ class DepressionSurvey extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: controller.showResult,
+          onPressed: () {
+            bool hasEmptySelectedOption = controller.surveyQuestions.any((question) => question.selectedOption.isEmpty);
+
+            log("hasEmptySelectedOption: ${hasEmptySelectedOption}");
+            if(!hasEmptySelectedOption)
+              {
+                controller.showResult();
+              }
+            else{
+              Get.showSnackbar(GetSnackBar(title: 'Alert', message: "Fill Form Completely", duration: Duration(seconds: 2),));
+            }
+            
+          },
           backgroundColor: Colors.blueAccent,
           child: Icon(Icons.check),
           tooltip: "Calculate Depression Level",

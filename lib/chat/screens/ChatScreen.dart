@@ -7,13 +7,15 @@ import 'package:intl/intl.dart';
 import 'package:psychiatrist_project/chat/model/ChatMessage.dart';
 import 'package:psychiatrist_project/chat/model/ChatRoomModel.dart';
 import 'package:psychiatrist_project/features/controllers/authController.dart';
+import 'package:psychiatrist_project/features/doctorScreen/presentation/patientReportScreen.dart';
 import 'package:psychiatrist_project/model.dart/doctor_model.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatRoom chatRoom;
   final String recieverName;
+  final String recieverId;
 
-  ChatScreen({required this.chatRoom, required this.recieverName});
+  ChatScreen({required this.chatRoom, required this.recieverName, required this.recieverId});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -59,6 +61,13 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.recieverName}'),  // Replace with the name of the other participant
+        actions: [
+          ElevatedButton(
+              style: ButtonStyle(shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)))),
+              onPressed: () {
+              Get.to(Patientreportscreen(patientId: widget.recieverId, patientName: widget.recieverName));
+          }, child: Text("View Report"))
+        ],
       ),
       body: Column(
         children: [

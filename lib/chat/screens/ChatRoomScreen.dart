@@ -51,10 +51,14 @@ class ChatRoomListScreen extends StatelessWidget {
 
                     return InkWell(
                       onTap: () {
+                        log(otherParticipant['userName']);
+                        log(otherParticipant['userId']);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ChatScreen(chatRoom: chatRoom,recieverName: otherParticipant['userName'] ?? 'Unknown',),
+                            builder: (context) => ChatScreen(chatRoom: chatRoom,recieverName: otherParticipant['userName'] ?? 'Unknown',
+                            recieverId: otherParticipant['userId'],
+                            ),
                           ),
                         );
                       },

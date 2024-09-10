@@ -86,6 +86,7 @@ class AuthController extends GetxController {
           'password': password.value,
           'email': email.value,
           'role': role.value,
+          'firstLogin': false
         });
         isDoctor.value = false;
         Get.to(SignInPage(), arguments: {'role': role.value});
@@ -128,8 +129,8 @@ class AuthController extends GetxController {
       _docProfileController.getDays(userId);
 
 
-      DocumentSnapshot doctorDoc =
-          await _firestore.collection('doctorList').doc(userId).get();
+      DocumentSnapshot doctorDoc = await _firestore.collection('doctorList').doc(userId).get();
+      DocumentSnapshot patientData = await _firestore.collection('patientList').doc(userId).get();
 
       if (doctorDoc.exists) {
         Get.snackbar(
@@ -145,10 +146,17 @@ class AuthController extends GetxController {
           "SinIn Successfully $fullName",
           duration: Duration(seconds: 5), // Optional: Set snackbar duration
         );
-        // Navigate to the Patient's screen
-        Get.to(DepressionSurvey());
-        // Get.to(DoctorDashboardScreen());
-        // Get.to(DoctorScreen());
+        if(patientData.exists)
+          {
+            if(patientData.get("firstLogin") == true)
+              {
+                Get.to(PatientScreen());
+              }
+            else{
+              Get.to(DepressionSurvey());
+            }
+          }
+
       }
       email.value = '';
       password.value = '';
