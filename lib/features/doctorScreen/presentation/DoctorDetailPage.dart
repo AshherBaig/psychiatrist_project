@@ -302,7 +302,7 @@ final AuthController authController = Get.find<AuthController>();
 
                           var chatRoom = ChatRoom.fromDocument(doc);
                           log(chatRoom.participants.toString());
-                          Get.to(ChatScreen(chatRoom: chatRoom, recieverName: widget.doctor.fullName, recieverId: widget.doctor.id,));
+                          Get.to(ChatScreen(chatRoom: chatRoom, recieverName: widget.doctor.fullName, recieverId: widget.doctor.id, isDoctor: false,));
 
                           // animator();
                         },

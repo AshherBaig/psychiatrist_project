@@ -10,62 +10,83 @@ class ChatRoomListScreen extends StatelessWidget {
   final String userId;
 
   String convertTimestampToReadableTime(Timestamp timestamp) {
-    // Convert Firestore Timestamp to DateTime
     DateTime dateTime = timestamp.toDate();
-
-    // Format the DateTime to a readable string with AM/PM
     String formattedTime = DateFormat('h:mm a').format(dateTime);
-
     return formattedTime;
   }
 
   ChatRoomListScreen({required this.userId});
+
   @override
   Widget build(BuildContext context) {
     log("userId: $userId");
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat Room'),
+        backgroundColor: Colors.teal, // Changed color for better aesthetics
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('personalChats')
-            .where('participantIds', arrayContains: userId).snapshots(),
+            .where('participantIds', arrayContains: userId)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator(color: Colors.black,));
-          }
-          else{
-            if(snapshot.data!.docs.length != 0)
-              {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: snapshot.data?.docs.length,
-                  itemBuilder: (context, index) {
-                    var chatRoom = ChatRoom.fromDocument(snapshot.data!.docs[index]);
-                    var otherParticipant = chatRoom.participants.firstWhere((p) => p['userId'] != userId,);
-                    log("Other Participant: ${otherParticipant.toString()}");
-                    bool isCurrentUser = otherParticipant['userId'] == userId; // Check if the message is from the current user
+            return Center(
+              child: CircularProgressIndicator(
+                color: Colors.teal, // Matching app bar color
+              ),
+            );
+          } else {
+            if (snapshot.data!.docs.length != 0) {
+              return ListView.builder(
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (context, index) {
+                  var chatRoom =
+                  ChatRoom.fromDocument(snapshot.data!.docs[index]);
+                  var otherParticipant = chatRoom.participants
+                      .firstWhere((p) => p['userId'] != userId);
+                  log("Other Participant: ${otherParticipant.toString()}");
+                  bool isCurrentUser = otherParticipant['userId'] == userId;
 
-
-                    return InkWell(
-                      onTap: () {
-                        log(otherParticipant['userName']);
-                        log(otherParticipant['userId']);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatScreen(chatRoom: chatRoom,recieverName: otherParticipant['userName'] ?? 'Unknown',
+                  return InkWell(
+                    onTap: () {
+                      log(otherParticipant['userName']);
+                      log(otherParticipant['userId']);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            isDoctor: true,
+                            chatRoom: chatRoom,
+                            recieverName:
+                            otherParticipant['userName'] ?? 'Unknown',
                             recieverId: otherParticipant['userId'],
-                            ),
                           ),
-                        );
-                      },
+                        ),
+                      );
+                    },
+                    child: Card(
+                      margin:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      elevation: 4.0,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
+                            CircleAvatar(
+                              radius: 24.0,
+                              backgroundColor: Colors.grey[300],
+                              child: Text(
+                                (otherParticipant['userName'] ??
+                                    'U')[0], // Display initial
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16.0),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,8 +111,10 @@ class ChatRoomListScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
+                            SizedBox(width: 8.0),
                             Text(
-                              convertTimestampToReadableTime(chatRoom.lastMessageTime),
+                              convertTimestampToReadableTime(
+                                  chatRoom.lastMessageTime),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey,
@@ -100,27 +123,16 @@ class ChatRoomListScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                    );
-
-                    //   ListTile(
-                    //   title: Text(otherParticipant['userName'] ?? 'Unknown'),
-                    //   subtitle: Text(chatRoom.lastMessage),
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => ChatScreen(chatRoom: chatRoom,recieverName: "Patient",),
-                    //       ),
-                    //     );
-                    //   },
-                    // );
-                  },
-                );
-              }
-            else{
-              return Center(child: Text("Not Chat Available"),);
+                    ),
+                  );
+                },
+              );
+            } else {
+              return Center(
+                child: Text("No Chat Available",
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700])),
+              );
             }
-
           }
         },
       ),

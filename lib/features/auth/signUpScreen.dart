@@ -157,9 +157,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 16),
                 // Password field
                 AuthField(
+                    suffixIcon: _signUpController.isObscure.value ? Icons.visibility_off : Icons.visibility,
+                    isObscure: _signUpController.isObscure.value,
+                    isSuffixIcon: true,
                     iconColor: AppColors.kPeriwinkle,
-                    onChanged: (value) =>
-                    _signUpController.password.value = value,
+                    onChanged: (value) => _signUpController.password.value = value,
                     keyboardType: TextInputType.visiblePassword,
                     icon: 'assets/icons/lock.svg',
                     validator: (value) {

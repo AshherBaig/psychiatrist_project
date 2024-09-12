@@ -25,29 +25,33 @@ class Patientreportscreen extends StatelessWidget {
               final answers = data['answers'] as List<dynamic>;
         
               return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+                scrollDirection: Axis.vertical,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: DataTable(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.grey.shade300)
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: DataTable(
+                      columnSpacing: 20.0,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey.shade300)
+                      ),
+                      columns: const [
+                        DataColumn(label: Text('Report', style: TextStyle(fontWeight:  FontWeight.w500),)),
+                        DataColumn(label: Text('')),
+                      ],
+                      rows: answers.map<DataRow>((answer) {
+                        final question = answer['question'] as String;
+                        final selectedOption = answer['selected_option'] as String;
+
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(question)),
+                            DataCell(Text(selectedOption), placeholder: true),
+                          ],
+                        );
+                      }).toList(),
                     ),
-                    columns: const [
-                      DataColumn(label: Text('Question')),
-                      DataColumn(label: Text('Selected Option')),
-                    ],
-                    rows: answers.map<DataRow>((answer) {
-                      final question = answer['question'] as String;
-                      final selectedOption = answer['selected_option'] as String;
-        
-                      return DataRow(
-                        cells: [
-                          DataCell(Text(question)),
-                          DataCell(Text(selectedOption), placeholder: true),
-                        ],
-                      );
-                    }).toList(),
                   ),
                 ),
               );

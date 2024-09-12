@@ -8,14 +8,14 @@ import 'package:psychiatrist_project/chat/model/ChatMessage.dart';
 import 'package:psychiatrist_project/chat/model/ChatRoomModel.dart';
 import 'package:psychiatrist_project/features/controllers/authController.dart';
 import 'package:psychiatrist_project/features/doctorScreen/presentation/patientReportScreen.dart';
-import 'package:psychiatrist_project/model.dart/doctor_model.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatRoom chatRoom;
   final String recieverName;
   final String recieverId;
+  bool isDoctor;
 
-  ChatScreen({required this.chatRoom, required this.recieverName, required this.recieverId});
+  ChatScreen({required this.chatRoom, required this.recieverName, required this.recieverId, required this.isDoctor});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -24,6 +24,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final AuthController authController = Get.find<AuthController>();
+
   void _sendMessage() {
     if (_messageController.text.isNotEmpty) {
       FirebaseFirestore.instance.collection('personalChats').doc(widget.chatRoom.chatId).collection("message").add({
@@ -43,31 +44,26 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  String formatTime(String dateString)
-  {
-    // Parse the date string to DateTime
-    DateTime dateTime = DateTime.parse(dateString);
-
-    // Format the DateTime to the desired format with AM/PM
-    String formattedTime = DateFormat('hh:mm a').format(dateTime);
-
-    // Print the formatted time
-    log(formattedTime); // Output: 09:28 PM
-    return formattedTime;
+  String formatTime(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
+    return DateFormat('hh:mm a').format(dateTime);
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.recieverName}'),  // Replace with the name of the other participant
-        actions: [
-          ElevatedButton(
-              style: ButtonStyle(shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)))),
-              onPressed: () {
+        title: Text(widget.recieverName,style: TextStyle(color: Colors.white),),
+        backgroundColor: Colors.teal,
+        actions: (widget.isDoctor) ? [
+          IconButton(
+            icon: Icon(Icons.assignment),
+            onPressed: () {
               Get.to(Patientreportscreen(patientId: widget.recieverId, patientName: widget.recieverName));
-          }, child: Text("View Report"))
-        ],
+            },
+          ),
+        ] : [],
       ),
       body: Column(
         children: [
@@ -75,37 +71,35 @@ class _ChatScreenState extends State<ChatScreen> {
             child: StreamBuilder(
               stream: FirebaseFirestore.instance.collection('personalChats').doc(widget.chatRoom.chatId)
                   .collection('message')
-                  // .where('chatId', isEqualTo: widget.chatRoom.chatId)
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
-                }
-                else if(snapshot.data!.docs.length == 0)
-                  {
-                    return Center(child: Text("Say Hi"));
-                  }
-                else{
-                  log(widget.chatRoom.chatId);
-                  log(snapshot.data!.docs.length.toString());
+                } else if (snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text("Say Hi", style: TextStyle(color: Colors.grey, fontSize: 16)));
+                } else {
                   return ListView.builder(
                     physics: AlwaysScrollableScrollPhysics(),
                     reverse: true,
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
                       var message = ChatMessage.fromDocument(snapshot.data!.docs[index]);
-                      log("Time: ${message.timestamp.toDate().toString()}");
-                      bool isCurrentUser = message.senderId == authController.currentUserId; // Check if the message is from the current user
+                      bool isCurrentUser = message.senderId == authController.currentUserId;
 
                       return Align(
                         alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                           margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                           decoration: BoxDecoration(
-                            color: isCurrentUser ? Colors.blue : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(12),
+                            color: isCurrentUser ? Colors.teal : Colors.grey[200],
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                              bottomLeft: isCurrentUser ? Radius.circular(12) : Radius.circular(0),
+                              bottomRight: isCurrentUser ? Radius.circular(0) : Radius.circular(12),
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment:
@@ -114,14 +108,15 @@ class _ChatScreenState extends State<ChatScreen> {
                               Text(
                                 message.message,
                                 style: TextStyle(
-                                  color: isCurrentUser ? Colors.white : Colors.black,
+                                  color: isCurrentUser ? Colors.white : Colors.black87,
+                                  fontSize: 16,
                                 ),
                               ),
                               SizedBox(height: 4),
                               Text(
-                                formatTime(message.timestamp.toDate().toString()), // Format your timestamp
+                                formatTime(message.timestamp),
                                 style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 12,
                                   color: isCurrentUser ? Colors.white70 : Colors.black54,
                                 ),
                               ),
@@ -129,17 +124,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                         ),
                       );
-
-                      // return ListTile(
-                      //   title: Text(message.senderName),
-                      //   subtitle: Text(message.message),
-                      //   trailing: Text(formatTime(message.timestamp.toDate().toString())),
-                      // );
                     },
                   );
                 }
-
-
               },
             ),
           ),
@@ -152,12 +139,25 @@ class _ChatScreenState extends State<ChatScreen> {
                     controller: _messageController,
                     decoration: InputDecoration(
                       hintText: 'Type a message',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.send),
+                SizedBox(width: 8),
+                ElevatedButton(
                   onPressed: _sendMessage,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(12),
+                  ),
+                  child: Icon(Icons.send, color: Colors.white),
                 ),
               ],
             ),

@@ -60,14 +60,17 @@ class DepressionSurveyController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   double calculateDepressionPercentage() {
-    int totalWeight = surveyQuestions.fold(0, (sum, question) => sum + question.weight);
+    int totalWeight = 0;
     int userScore = 0;
 
     for (var question in surveyQuestions) {
       if (question.selectedOption.isNotEmpty) {
+        totalWeight += question.weight;
         userScore += question.weight;
       }
     }
+
+    if (totalWeight == 0 ) return 0;
 
     double percentage = (userScore / totalWeight) * 100;
     return percentage;
@@ -96,6 +99,7 @@ class DepressionSurveyController extends GetxController {
                     'selected_option': q.selectedOption,
                   })
               .toList(),
+          'hasCompletedSurvey': true
         });
 
         Get.snackbar(
@@ -126,7 +130,17 @@ class DepressionSurveyController extends GetxController {
   }
 
   void showResult() {
-    double percentage = calculateDepressionPercentage();
+    int userScore = 0;
+    int totalWeight = surveyQuestions.fold(0, (sum, question) => sum + question.weight);
+
+    // Calculate user score based on selected options (Yes adds weight, No adds 0)
+    for (var question in surveyQuestions) {
+      if (question.selectedOption == "Yes") {
+        userScore += question.weight;
+      }
+    }
+
+    double percentage = (userScore / totalWeight) * 100;
     String resultMessage;
 
     if (percentage < 20) {
@@ -153,11 +167,24 @@ class DepressionSurveyController extends GetxController {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
-            CircularProgressIndicator(
-              value: percentage / 100,
-              backgroundColor: Colors.grey.shade300,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  percentage > 50 ? Colors.red : Colors.green),
+            // Circular progress bar
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                CircularProgressIndicator(
+                  value: percentage / 100,
+                  backgroundColor: Colors.grey.shade300,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    percentage > 50 ? Colors.red : Colors.green,
+                  ),
+                  strokeWidth: 8,
+                ),
+                // Display the percentage inside the circle
+                Text(
+                  "${percentage.toStringAsFixed(1)}%",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ],
         ),
