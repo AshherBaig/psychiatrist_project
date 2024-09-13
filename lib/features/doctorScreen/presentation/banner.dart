@@ -120,43 +120,6 @@ class DoctorBanner extends StatelessWidget {
             ],
           ),
         ),
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Container(
-                height: getRelativeWidth(0.12),
-                width: getRelativeWidth(0.12),
-                child: Image.asset("assets/images/virus.png")),
-          ),
-        ),
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: getRelativeHeight(0.035),
-                  horizontal: getRelativeWidth(0.16)),
-              child: Container(
-                  height: getRelativeWidth(0.06),
-                  width: getRelativeWidth(0.06),
-                  child: Image.asset("assets/images/virus.png")),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: getRelativeHeight(0.01),
-                  horizontal: getRelativeWidth(0.07)),
-              child: Container(
-                  height: getRelativeWidth(0.08),
-                  width: getRelativeWidth(0.08),
-                  child: Image.asset("assets/images/virus.png")),
-            ),
-          ),
-        )
       ],
     );
   }

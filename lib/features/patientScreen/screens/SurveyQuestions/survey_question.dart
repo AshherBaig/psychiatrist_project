@@ -10,7 +10,7 @@ import 'package:psychiatrist_project/features/patientScreen/screens/SurveyQuesti
 class DepressionSurveyController extends GetxController {
   final List<SurveyQuestion> surveyQuestions = [
     SurveyQuestion(
-      question: "Your date of birth?",
+      question: "Your age?",
       options: ["Under 12", "Teenager", "Adult"],
       weight: 5,
     ),
@@ -144,11 +144,11 @@ class DepressionSurveyController extends GetxController {
     String resultMessage;
 
     if (percentage < 20) {
-      resultMessage = "You have a low chance of depression symptoms (${percentage.toStringAsFixed(1)}%).";
+      resultMessage = "You have a low chance of Epilepsy symptoms (${percentage.toStringAsFixed(1)}%).";
     } else if (percentage < 50) {
-      resultMessage = "You may have moderate chances of depression symptoms (${percentage.toStringAsFixed(1)}%).";
+      resultMessage = "You may have moderate chances of Epilepsy symptoms (${percentage.toStringAsFixed(1)}%).";
     } else {
-      resultMessage = "You have a high chance of depression symptoms (${percentage.toStringAsFixed(1)}%).";
+      resultMessage = "You have a high chance of Epilepsy symptoms (${percentage.toStringAsFixed(1)}%).";
     }
 
     Get.dialog(

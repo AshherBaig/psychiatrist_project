@@ -39,7 +39,7 @@ class PatientBanner extends StatelessWidget {
                 ),
                 child: Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: getRelativeWidth(0.03)),
+                  EdgeInsets.symmetric(horizontal: getRelativeWidth(0.03)),
                   child: Container(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,14 +68,14 @@ class PatientBanner extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(width: getRelativeWidth(0.012)),
+                        // SizedBox(width: getRelativeWidth(0.012)),
                         Flexible(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Check Up COVID-19",
+                                "Welcome to E Psychiatrist",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class PatientBanner extends StatelessWidget {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      "Contains several list of questions to check your physical condition.",
+                                      "Contains several list of questions to check your Mental health condition.",
                                       style: TextStyle(
                                           color: Colors.white.withOpacity(0.85),
                                           fontSize: getRelativeWidth(0.033)),
@@ -98,9 +98,9 @@ class PatientBanner extends StatelessWidget {
                                     decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.2),
                                         borderRadius:
-                                            BorderRadius.circular(15)),
+                                        BorderRadius.circular(15)),
                                     padding:
-                                        EdgeInsets.all(getRelativeWidth(0.012)),
+                                    EdgeInsets.all(getRelativeWidth(0.012)),
                                     child: Icon(
                                       Icons.arrow_forward_ios,
                                       color: Colors.white,
@@ -120,43 +120,6 @@ class PatientBanner extends StatelessWidget {
             ],
           ),
         ),
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Container(
-                height: getRelativeWidth(0.12),
-                width: getRelativeWidth(0.12),
-                child: Image.asset("assets/images/virus.png")),
-          ),
-        ),
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: getRelativeHeight(0.035),
-                  horizontal: getRelativeWidth(0.16)),
-              child: Container(
-                  height: getRelativeWidth(0.06),
-                  width: getRelativeWidth(0.06),
-                  child: Image.asset("assets/images/virus.png")),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: getRelativeHeight(0.01),
-                  horizontal: getRelativeWidth(0.07)),
-              child: Container(
-                  height: getRelativeWidth(0.08),
-                  width: getRelativeWidth(0.08),
-                  child: Image.asset("assets/images/virus.png")),
-            ),
-          ),
-        )
       ],
     );
   }
