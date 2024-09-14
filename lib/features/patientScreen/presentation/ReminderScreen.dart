@@ -3,10 +3,16 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'ReminderController.dart'; // Make sure the path is correct
 
-class ReminderScreen extends StatelessWidget {
+class ReminderScreen extends StatefulWidget {
+  @override
+  State<ReminderScreen> createState() => _ReminderScreenState();
+}
+
+class _ReminderScreenState extends State<ReminderScreen> {
   final ReminderController reminderController = Get.put(ReminderController());
+
   final TextEditingController timeController = TextEditingController();
-  
+
   String selectedType = 'Medication';
 
   @override
@@ -50,6 +56,10 @@ class ReminderScreen extends StatelessWidget {
                 isExpanded: true,
                 onChanged: (String? newValue) {
                   selectedType = newValue!;
+                  setState(() {
+
+                  });
+
                 },
                 items: <String>['Medication', 'Meditation']
                     .map<DropdownMenuItem<String>>((String value) {
